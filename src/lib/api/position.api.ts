@@ -10,7 +10,7 @@ const BASE_URL = import.meta.env.VITE_API_PATH;
 
 export const positionCreate = async (
   token: string,
-  data: z.infer<typeof CreatePositionSchema>
+  data: z.infer<typeof CreatePositionSchema>,
 ) => {
   return await fetch(`${BASE_URL}/positions`, {
     method: "POST",
@@ -25,7 +25,7 @@ export const positionCreate = async (
 
 export const positionList = async (
   token: string | undefined,
-  request: SearchPositionRequest
+  request: SearchPositionRequest,
 ): Promise<{ paging: Paging; data: Position[] }> => {
   const url = new URL(`${BASE_URL}/positions`);
 

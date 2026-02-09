@@ -45,7 +45,7 @@ export function useCreatePosition(token?: string) {
 
 export function useGetPosition(
   token: string | undefined,
-  search: SearchPositionRequest
+  search: SearchPositionRequest,
 ) {
   return useQuery<{
     paging: Paging;

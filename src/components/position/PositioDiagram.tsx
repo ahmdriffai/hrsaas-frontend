@@ -27,7 +27,7 @@ const TreeNode = ({
 
         const container = containerRef.current;
         const childNodes = container.querySelectorAll(
-          ":scope > .children-wrapper > .child-node"
+          ":scope > .children-wrapper > .child-node",
         );
         const positions: number[] = [];
 
@@ -59,8 +59,8 @@ const TreeNode = ({
             isRoot
               ? "border-purple-500 bg-purple-100"
               : hasChildren
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-400 bg-white"
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-400 bg-white"
           }`}
         >
           <div className="font-semibold text-xs text-gray-800 wrap-break-words">
@@ -146,7 +146,7 @@ const PositionDiagram: React.FC<{ data: Position[] }> = ({ data }) => {
   const buildTree = (data: Position[]) => {
     const nodeMap: { [key: string]: OrgNode & { children: OrgNode[] } } = {};
 
-    data.forEach((item) => {
+    data?.forEach((item) => {
       nodeMap[item.id] = {
         id: item.id,
         name: item.name,
@@ -156,7 +156,7 @@ const PositionDiagram: React.FC<{ data: Position[] }> = ({ data }) => {
     });
 
     let root = null;
-    data.forEach((item) => {
+    data?.forEach((item) => {
       const node = nodeMap[item.id];
 
       if (!item.parent) {

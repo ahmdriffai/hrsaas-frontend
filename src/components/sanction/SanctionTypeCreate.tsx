@@ -56,7 +56,7 @@ export default function SanctionTypeCreate() {
       sanctionTypeCreate(token ?? "", data),
     onSuccess: async (response) => {
       const responseBody = await response.json();
-      queryClient.invalidateQueries({ queryKey: ["sanction-typesx"] });
+      queryClient.invalidateQueries({ queryKey: ["sanction-types"] });
       if (response.status === 200) {
         toast.success("Sanction type created successfully");
         form.reset();
@@ -70,7 +70,7 @@ export default function SanctionTypeCreate() {
   });
 
   async function handleSubmit(
-    values: z.infer<typeof CreateSanctionTypeSchema>
+    values: z.infer<typeof CreateSanctionTypeSchema>,
   ) {
     mutation.mutate(values);
     form.reset();
@@ -131,8 +131,8 @@ export default function SanctionTypeCreate() {
                                 {value === 1
                                   ? "Ringan"
                                   : value === 2
-                                  ? "Sedang"
-                                  : "Berat"}
+                                    ? "Sedang"
+                                    : "Berat"}
                               </SelectItem>
                             ))}
                           </SelectGroup>

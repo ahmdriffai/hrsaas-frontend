@@ -56,13 +56,13 @@ export default function UserRegister(): React.ReactNode {
       <form onSubmit={handleSubmit}>
         <div className="grid w-full max-w-sm gap-6">
           <div className="grid w-full max-w-sm items-center gap-3">
-            <Label htmlFor="email">Name</Label>
+            <Label htmlFor="email">Email</Label>
             <InputGroup>
               <InputGroupInput
                 type="text"
                 placeholder="Enter your email"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <InputGroupAddon>
                 <MailIcon />
@@ -71,13 +71,13 @@ export default function UserRegister(): React.ReactNode {
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-3">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Name</Label>
             <InputGroup>
               <InputGroupInput
                 type="text"
                 placeholder="Enter your name"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
               <InputGroupAddon>
                 <User2 />

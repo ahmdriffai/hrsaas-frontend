@@ -109,7 +109,7 @@ export default function PositionCreate() {
                           <SelectGroup>
                             <SelectLabel>Induk </SelectLabel>
 
-                            {positions?.data.map((position, index) => {
+                            {positions?.data?.map((position, index) => {
                               const level = getLevel(position);
                               return (
                                 <SelectItem key={index} value={position.id}>
