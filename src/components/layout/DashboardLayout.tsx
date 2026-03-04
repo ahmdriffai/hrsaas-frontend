@@ -61,8 +61,8 @@ const data = {
           url: "#",
         },
         {
-          title: "Jadwal Shift",
-          url: "#",
+          title: "Pola Kerja",
+          url: "/shifts",
         },
         {
           title: "Sanksi / Peringatan",
@@ -110,10 +110,18 @@ export default function DashboardLayout(): React.ReactNode {
       });
     }
 
-    const responnse = await userCurrent(token ?? "");
-    if (responnse.status === 401) {
+    const response = await userCurrent(token ?? "");
+    if (response.status === 401) {
       await navigate({
         pathname: "/login",
+      });
+      setToken("");
+    }
+
+    const body = await response.json();
+    if (!body?.data?.role || body.data.role.toUpperCase() !== "ADMIN") {
+      await navigate({
+        pathname: "/not-found",
       });
       setToken("");
     }

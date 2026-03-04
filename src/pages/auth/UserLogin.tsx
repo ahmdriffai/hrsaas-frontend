@@ -6,15 +6,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
+import { Button } from "../../components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "../ui/input-group";
-import { Label } from "../ui/label";
-import Logo from "../ui/logo";
-import { Spinner } from "../ui/spinner";
+} from "../../components/ui/input-group";
+import { Label } from "../../components/ui/label";
+import Logo from "../../components/ui/logo";
+import { Spinner } from "../../components/ui/spinner";
 
 export default function UserLogin(): React.ReactNode {
   const [email, setEmail] = useState<string>("");
@@ -28,6 +28,12 @@ export default function UserLogin(): React.ReactNode {
       const responseBody = await response.json();
 
       if (response.status === 200) {
+        const user = responseBody?.data?.user;
+        if (!user?.role || user.role.toUpperCase() !== "ADMIN") {
+          toast.error("Unauthorized: admin access only");
+          return;
+        }
+
         toast.success("User login successfully");
         const token = responseBody.data.token;
         setToken(token);
@@ -50,7 +56,7 @@ export default function UserLogin(): React.ReactNode {
   }
 
   return (
-    <div className="bg-card shadow p-8 w-full max-w-md rounded-3xl  backdrop-blur-sm">
+    <div className="bg-card p-8 border shadow-2xl w-full max-w-md rounded-3xl">
       <div className="text-center mb-8">
         <Logo />
         <p className="text-gray-500 mt-4">Login user</p>

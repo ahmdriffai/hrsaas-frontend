@@ -21,7 +21,9 @@ type Props = {
 export default function Title({ title, breadcrumbs }: Props) {
   return (
     <div className="mb-6 flex flex-col gap-y-4">
-      <h1 className="text-2xl font-semibold">{title}</h1>
+      <h1 className="text-2xl font-semibold">
+        {breadcrumbs?.at(-1)?.label ?? title}
+      </h1>
 
       <Breadcrumb>
         <BreadcrumbList>

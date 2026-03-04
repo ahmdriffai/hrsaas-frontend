@@ -4,14 +4,14 @@ import type React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
+import { Button } from "../../components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "../ui/input-group";
-import { Label } from "../ui/label";
-import Logo from "../ui/logo";
+} from "../../components/ui/input-group";
+import { Label } from "../../components/ui/label";
+import Logo from "../../components/ui/logo";
 
 export default function UserRegister(): React.ReactNode {
   const [name, setName] = useState<string>("");

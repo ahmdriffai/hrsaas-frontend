@@ -3,6 +3,8 @@ import { z } from "zod";
 export const CreateEmployeeScheme = z.object({
   employee_number: z.string().min(1),
   fullname: z.string().min(1),
+  email: z.string().min(1),
+  password: z.string().min(1),
   birth_place: z.string().min(1),
   birth_date: z.string().min(1),
   blood_type: z.string().min(1),

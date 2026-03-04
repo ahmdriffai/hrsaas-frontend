@@ -3,17 +3,14 @@ import type {
   Employee,
   SearchEmployeeRequest,
 } from "@/lib/model/employee.model";
-import type { Paging } from "@/lib/types/paging-types";
+import type { PaginatedData } from "@/lib/types/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export function useGetEmployee(
   token: string | undefined,
-  search: SearchEmployeeRequest
+  search: SearchEmployeeRequest,
 ) {
-  return useQuery<{
-    paging: Paging;
-    data: Employee[];
-  }>({
+  return useQuery<PaginatedData<Employee>>({
     queryKey: ["employees", search],
     queryFn: async () => employeeList(token, search),
     enabled: !!token,

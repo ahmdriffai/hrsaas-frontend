@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { sanctionCreate, sanctionTypeList } from "@/lib/api/sanction.api";
+import {
+  sanctionCreate,
+  sanctionList,
+  sanctionTypeList,
+} from "@/lib/api/sanction.api";
 import type {
   CreateSanctionSchema,
+  Sanction,
   SanctionType,
   SearchSanctionTypeReq,
 } from "@/lib/model/sanction.model";
 import type { Paging } from "@/lib/types/paging-types";
+import type { PaginatedData } from "@/lib/types/types";
 import {
   keepPreviousData,
   useMutation,
@@ -15,9 +21,22 @@ import {
 import { toast } from "sonner";
 import type z from "zod";
 
+export function useGetSanction(
+  token: string | undefined,
+  search: SearchSanctionTypeReq,
+) {
+  return useQuery<PaginatedData<Sanction>>({
+    queryKey: ["sanctions", search],
+    queryFn: async () => sanctionList(token ?? "", search),
+    enabled: !!token,
+    placeholderData: keepPreviousData,
+    retry: 2,
+  });
+}
+
 export function useGetSanctionType(
   token: string | undefined,
-  search: SearchSanctionTypeReq
+  search: SearchSanctionTypeReq,
 ) {
   return useQuery<{
     paging: Paging;

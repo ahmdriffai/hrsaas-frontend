@@ -1,6 +1,6 @@
 import type { Position } from "@/lib/types/position.type";
-import { Plus } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import PositionCreate from "./PositionCreate";
 
 type OrgNode = {
   id: string;
@@ -67,13 +67,10 @@ const TreeNode = ({
             {node.name}
           </div>
 
-          <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-primary rounded-full border border-white shadow-sm">
-            {/* {true ? (
-                <ChevronUp className="w-4 h-4 text-gray-600" />
-              ) : ( */}
+          <PositionCreate parentId={node.id} />
+          {/* <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-primary rounded-full border border-white shadow-sm">
             <Plus className="w-4 h-4 text-white" />
-            {/* )} */}
-          </div>
+          </div> */}
         </div>
       </div>
 

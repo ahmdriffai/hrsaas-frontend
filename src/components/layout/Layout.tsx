@@ -16,7 +16,7 @@ export default function Layout(): React.ReactNode {
   });
 
   return (
-    <div className="bg-background shadow font-poppins  flex items-center justify-center min-h-screen p-4">
+    <div className="bg-primary shadow font-poppins  flex items-center justify-center min-h-screen p-4">
       <Toaster richColors position="top-center" />
       <Outlet />
     </div>

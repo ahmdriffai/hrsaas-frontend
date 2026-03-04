@@ -1,20 +1,6 @@
-import { useDocumentTitle } from "@/hooks/user-titledoc";
-import { sanctionList } from "@/lib/api/sanction.api";
-import type {
-  Sanction,
-  SearchSanctionRequest,
-} from "@/lib/model/sanction.model";
-import type { Paging } from "@/lib/types/paging-types";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { MoreHorizontal, Search, Settings } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
-import { useLocalStorage } from "react-use";
-import { toast } from "sonner";
-import Title from "../layout/Title";
-import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { OwnPagination } from "../ui/custom/ownpagination";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { OwnPagination } from "@/components/ui/custom/ownpagination";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,8 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Input } from "../ui/input";
+} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -32,7 +17,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -40,82 +25,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import SanctionCreate from "./SanctionCreate";
+} from "@/components/ui/table";
+import type { Sanction } from "@/lib/model/sanction.model";
+import type { PaginatedData } from "@/lib/types/types";
+import { MoreHorizontal } from "lucide-react";
 
-export default function SanctionList() {
-  useDocumentTitle("Daftar Employee");
+interface Props {
+  data: PaginatedData<Sanction> | undefined;
+  page: number;
+  size: string;
+  setPage: (value: number) => void;
+  setSize: (value: string) => void;
+}
 
-  const [key, setKey] = useState("");
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState("10");
-  const [searchKey, setSearchKey] = useState("");
-  const [token] = useLocalStorage("token", "");
-  const search: SearchSanctionRequest = {
-    reason: searchKey,
-    start_date: "",
-    end_date: "",
-    sanction_id: "",
-    status: "",
-    page,
-    size: Number(size),
-  };
-
-  function handleSearch(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSearchKey(key);
-    setPage(1);
-  }
-
-  const { data, isError, error } = useQuery<{
-    paging: Paging;
-    data: Sanction[];
-  }>({
-    queryKey: ["sanctions", search],
-    queryFn: async () => sanctionList(token ?? "", search),
-    enabled: !!token,
-    placeholderData: keepPreviousData,
-  });
-
-  if (isError) {
-    toast.error((error as Error).message);
-  }
+export default function SanctionList({
+  data,
+  page,
+  size,
+  setPage,
+  setSize,
+}: Props) {
   return (
     <div>
-      <Title title="Data Sanksi Karyawan" />
-      <Card className="mb-5">
-        <CardContent>
-          <div className="mb-4 flex gap-4">
-            <SanctionCreate />
-            <Button asChild>
-              <Link to="/employee-sanctions/types">
-                <Settings />
-                Jenis Sanksi / Peringatan
-              </Link>
-            </Button>
-          </div>
-          <form
-            onSubmit={handleSearch}
-            className="grid grid-cols-1 gap-4 md:grid-cols-4"
-          >
-            <div className="space-y-1">
-              <Input
-                id="name"
-                placeholder="Cari ..."
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-              />
-            </div>
-
-            <div className="flex items-end gap-2">
-              <Button type="submit" className="gap-2">
-                <Search className="h-4 w-4" />
-                Search
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
       <Card>
         <CardContent>
           <div className="rounded-md border mt-6">
