@@ -54,11 +54,7 @@ const data = {
         },
         {
           title: "Lokasi Kehadiran",
-          url: "#",
-        },
-        {
-          title: "Jadwal Hari Kerja",
-          url: "#",
+          url: "/office-locations",
         },
         {
           title: "Pola Kerja",

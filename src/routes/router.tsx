@@ -10,6 +10,7 @@ import UserLogout from "@/pages/auth/UserLogout";
 import UserRegister from "@/pages/auth/UserRegister";
 import DashboardPage from "@/pages/DashboardPage";
 import EmployeePage from "@/pages/employee/EmployeePage";
+import OfficeLocationPage from "@/pages/office-location/OfficeLocationPage";
 import PositionPage from "@/pages/position/PositionPage";
 import PositionVisualPage from "@/pages/position/PositionVisualPage";
 import SanctionTypePage from "@/pages/sanction/sanction-type/SanctionTypePage";
@@ -45,6 +46,9 @@ export default function AppRouter() {
           </Route>
           <Route path="shifts">
             <Route index element={<ShiftList />} />
+          </Route>
+          <Route path="office-locations">
+            <Route index element={<OfficeLocationPage />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />
