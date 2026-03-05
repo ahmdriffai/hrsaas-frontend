@@ -36,7 +36,6 @@ export default function LocationList({
             <TableHeader>
               <TableRow>
                 <TableHead>Nama Lokasi</TableHead>
-                <TableHead>Alamat</TableHead>
                 <TableHead>Latitude</TableHead>
                 <TableHead>Longitude</TableHead>
                 <TableHead>Radius (m)</TableHead>
@@ -47,8 +46,9 @@ export default function LocationList({
               {data?.data && data.data.length > 0 ? (
                 data.data.map((location) => (
                   <TableRow key={location.id}>
-                    <TableCell className="font-medium">{location.name}</TableCell>
-                    <TableCell>{location.address}</TableCell>
+                    <TableCell className="font-medium">
+                      {location.name}
+                    </TableCell>
                     <TableCell>{location.lat}</TableCell>
                     <TableCell>{location.lng}</TableCell>
                     <TableCell>{location.radius_meters}</TableCell>
@@ -70,8 +70,8 @@ export default function LocationList({
 
         <div className="mt-5 flex items-center justify-between">
           <p className="text-xs font-bold">
-            Menampilkan {data?.data.length ?? 0} dari {data?.paging.total_item ?? 0} total
-            data.
+            Menampilkan {data?.data.length ?? 0} dari{" "}
+            {data?.paging.total_item ?? 0} total data.
           </p>
 
           {data && (

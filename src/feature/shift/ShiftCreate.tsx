@@ -20,81 +20,62 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { shiftCreate } from "@/lib/api/shift.api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCreateShift } from "@/hooks/feature/use-shift";
+import type { CreateShiftSchema } from "@/lib/model/shift.model";
+
 import { Controller, useForm } from "react-hook-form";
 import { useLocalStorage } from "react-use";
-import { toast } from "sonner";
+import type z from "zod";
 
 const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
-type FormValues = {
-  name: string;
-  tolerance: number;
-  scheduleType: "fixed" | "flexible";
-  schedules: {
-    day: string;
-    type: string;
-    checkIn: string;
-    checkOut: string;
-    breakStart: string;
-    breakEnd: string;
-    maxBreak: number;
-  }[];
+const normalizeTime = (time: string) => {
+  if (!time) return "";
+  return time.length === 5 ? `${time}:00` : time;
 };
 
 export default function ShiftCreate() {
   const [token] = useLocalStorage("token", "");
-  const queryClient = useQueryClient();
 
-  const { control, handleSubmit, watch, setValue, reset } = useForm<FormValues>(
-    {
+  const form = useForm<z.infer<typeof CreateShiftSchema>>({
     defaultValues: {
       name: "",
-      tolerance: 0,
-      scheduleType: "fixed",
-      schedules: days.map((day) => ({
-        day,
-        type: "Hari Kerja",
-        checkIn: "",
-        checkOut: "",
-        breakStart: "",
-        breakEnd: "",
-        maxBreak: 60,
+      late_tolerance: 0,
+      shift_days: days.map((_, index) => ({
+        weekday: index + 1,
+        day_type: "workday",
+        check_in: "",
+        check_out: "",
+        break_start: "",
+        break_end: "",
+        max_break_minutes: 60,
       })),
     },
   });
-  
-  const mutation = useMutation({
-    mutationFn: (data: FormValues) =>
-      shiftCreate(token ?? "", {
-        ...data,
-        tolerance: Number(data.tolerance),
-        schedules: data.schedules.map((schedule) => ({
-          ...schedule,
-          maxBreak: Number(schedule.maxBreak),
-        })),
-      }),
-    onSuccess: async (response) => {
-      const responseBody = await response.json();
-      queryClient.invalidateQueries({ queryKey: ["shifts"] });
-      if (response.status === 200) {
-        toast.success("Shift created successfully");
-        reset();
-      } else {
-        toast.error(responseBody?.error ?? "Failed to create shift");
-      }
-    },
-    onError: async (error: any) => {
-      toast.error(error?.message || "Something went wrong");
-    },
-  });
 
-  const scheduleType = watch("scheduleType");
+  const mutation = useCreateShift(token ?? "");
 
-  const onSubmit = async (data: FormValues) => {
-    mutation.mutate(data);
+  const onSubmit = async (values: z.infer<typeof CreateShiftSchema>) => {
+    const request: z.infer<typeof CreateShiftSchema> = {
+      name: values.name,
+      late_tolerance: Number(values.late_tolerance),
+      shift_days: values.shift_days.map((day) => ({
+        ...day,
+        max_break_minutes: Number(day.max_break_minutes ?? 0),
+        check_in: normalizeTime(day.check_in ?? ""),
+        check_out: normalizeTime(day.check_out ?? ""),
+        break_start: normalizeTime(day.break_start ?? ""),
+        break_end: normalizeTime(day.break_end ?? ""),
+      })),
+    };
+
+    mutation.mutate(request, {
+      onSuccess: (response) => {
+        if (response.status === 200) {
+          form.reset();
+        }
+      },
+    });
   };
 
   return (
@@ -108,13 +89,13 @@ export default function ShiftCreate() {
           <DialogTitle>Buat Pola Kerja</DialogTitle>
         </DialogHeader>
         <div className="no-scrollbar -mx-4 max-h-[90vh] overflow-y-auto overflow-x-auto px-4">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Nama Pola */}
             <div className="grid gap-2">
               <Label>Nama Pola Kerja *</Label>
               <Controller
                 name="name"
-                control={control}
+                control={form.control}
                 render={({ field }) => <Input {...field} />}
               />
             </div>
@@ -123,34 +104,10 @@ export default function ShiftCreate() {
             <div className="grid gap-2">
               <Label>Toleransi Keterlambatan (Menit)</Label>
               <Controller
-                name="tolerance"
-                control={control}
+                name="late_tolerance"
+                control={form.control}
                 render={({ field }) => <Input type="number" {...field} />}
               />
-            </div>
-
-            {/* Tabs */}
-            <div>
-              <Label>Jadwal Kerja *</Label>
-
-              <Tabs
-                value={scheduleType}
-                onValueChange={(val) =>
-                  setValue("scheduleType", val as "fixed" | "flexible")
-                }
-                className="mt-2"
-              >
-                <TabsList>
-                  <TabsTrigger value="fixed">Jadwal Jam Tetap</TabsTrigger>
-                  <TabsTrigger value="flexible">
-                    Jadwal Jam Fleksibel
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-
-              <p className="text-sm text-red-500 mt-1">
-                *Hanya bisa pilih salah satu jadwal
-              </p>
             </div>
 
             {/* Table */}
@@ -169,61 +126,68 @@ export default function ShiftCreate() {
                 </thead>
 
                 <tbody>
-                  {days.map((day, index) => (
-                    <tr key={day} className="border-t">
-                      <td className="p-2">{day}</td>
+                  {days.map((day, index) => {
+                    const isOffday = form.watch(`shift_days.${index}.day_type`) === "offday";
 
-                      {/* Pola Kerja */}
-                      <td className="p-2">
-                        <Controller
-                          name={`schedules.${index}.type`}
-                          control={control}
-                          render={({ field }) => (
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Hari Kerja">
-                                  Hari Kerja
-                                </SelectItem>
-                                <SelectItem value="Libur">Libur</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        />
-                      </td>
+                    return (
+                      <tr key={day} className="border-t">
+                        <td className="p-2">{day}</td>
 
-                      {/* Jam fields */}
-                      {["checkIn", "checkOut", "breakStart", "breakEnd"].map(
-                        (fieldName) => (
+                        {/* Pola Kerja */}
+                        <td className="p-2">
+                          <Controller
+                            name={`shift_days.${index}.day_type`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <Select
+                                onValueChange={field.onChange}
+                                value={field.value}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="workday">
+                                    Hari Kerja
+                                  </SelectItem>
+                                  <SelectItem value="offday">Libur</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                        </td>
+
+                        {/* Jam fields */}
+                        {[
+                          "check_in",
+                          "check_out",
+                          "break_start",
+                          "break_end",
+                        ].map((fieldName) => (
                           <td key={fieldName} className="p-2">
                             <Controller
-                              name={`schedules.${index}.${fieldName}` as any}
-                              control={control}
+                              name={`shift_days.${index}.${fieldName}` as any}
+                              control={form.control}
                               render={({ field }) => (
-                                <Input type="time" {...field} />
+                                <Input type="time" {...field} disabled={isOffday} />
                               )}
                             />
                           </td>
-                        ),
-                      )}
+                        ))}
 
-                      {/* Max Break */}
-                      <td className="p-2">
-                        <Controller
-                          name={`schedules.${index}.maxBreak`}
-                          control={control}
-                          render={({ field }) => (
-                            <Input type="number" {...field} />
-                          )}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                        {/* Max Break */}
+                        <td className="p-2">
+                          <Controller
+                            name={`shift_days.${index}.max_break_minutes`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <Input type="number" {...field} disabled={isOffday} />
+                            )}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

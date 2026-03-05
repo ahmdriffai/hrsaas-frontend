@@ -4,7 +4,7 @@ import NotFound from "../components/layout/NotFound";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Layout from "@/components/layout/Layout";
-import ShiftList from "@/feature/shift/ShiftList";
+import ShiftPage from "@/pages/shift/ShiftPage";
 import UserLogin from "@/pages/auth/UserLogin";
 import UserLogout from "@/pages/auth/UserLogout";
 import UserRegister from "@/pages/auth/UserRegister";
@@ -45,7 +45,7 @@ export default function AppRouter() {
             </Route>
           </Route>
           <Route path="shifts">
-            <Route index element={<ShiftList />} />
+            <Route index element={<ShiftPage />} />
           </Route>
           <Route path="office-locations">
             <Route index element={<OfficeLocationPage />} />
