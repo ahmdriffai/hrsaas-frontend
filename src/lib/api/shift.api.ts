@@ -1,23 +1,19 @@
-import type {
-  CreateShiftRequest,
-  SearchShiftRequest,
-  Shift,
-} from "../model/shift.model";
+import type { SearchShiftRequest, Shift } from "../model/shift.model";
 import type { Paging } from "../types/paging-types";
 
 const BASE_URL = import.meta.env.VITE_API_PATH;
 
-export const shiftCreate = async (token: string, request: CreateShiftRequest) => {
-  return await fetch(`${BASE_URL}/shifts`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + token,
-    },
-    body: JSON.stringify(request),
-  });
-};
+// export const shiftCreate = async (token: string, request: CreateShiftSchema) => {
+//   return await fetch(`${BASE_URL}/shifts`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Accept: "application/json",
+//       Authorization: "Bearer " + token,
+//     },
+//     body: JSON.stringify(request),
+//   });
+// };
 
 export const shiftList = async (
   token: string | undefined,

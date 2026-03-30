@@ -1,6 +1,5 @@
 import Title from "@/components/layout/Title";
 import ShiftList from "@/feature/shift/ShiftList";
-import ShiftSearch from "@/feature/shift/ShiftSearch";
 import { useGetShift } from "@/hooks/feature/use-shift";
 import type { SearchShiftRequest } from "@/lib/model/shift.model";
 import { useState } from "react";
@@ -13,29 +12,20 @@ const breadcrumbs = [
 
 export default function ShiftPage() {
   const [token] = useLocalStorage("token", "");
-  const [key, setKey] = useState("");
-  const [searchKey, setSearchKey] = useState("");
   const [page, setPage] = useState(1);
   const [size, setSize] = useState("10");
 
   const search: SearchShiftRequest = {
-    key: searchKey,
+    key: "",
     page,
-    size: Number(size), 
+    size: Number(size),
   };
 
   const { data } = useGetShift(token ?? "", search);
 
-  function handleSearch(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSearchKey(key);
-    setPage(1);
-  }
-
   return (
     <div>
       <Title title="Data Shift" breadcrumbs={breadcrumbs} />
-      <ShiftSearch handleSearch={handleSearch} searchKey={key} setKey={setKey} />
       <ShiftList
         data={data}
         page={page}
