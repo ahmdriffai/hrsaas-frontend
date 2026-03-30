@@ -21,7 +21,6 @@ export default function UserLogin(): React.ReactNode {
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
   const [, setToken] = useLocalStorage("token", "");
-
   const mutation = useMutation({
     mutationFn: userLogin,
     onSuccess: async (response) => {
@@ -59,7 +58,7 @@ export default function UserLogin(): React.ReactNode {
     <div className="bg-card p-8 border shadow-2xl w-full max-w-md rounded-3xl">
       <div className="text-center mb-8">
         <Logo />
-        <p className="text-gray-500 mt-4">Login user</p>
+        <p className="text-gray-500 mt-4">Login user </p>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="grid w-full max-w-sm gap-6">

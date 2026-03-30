@@ -1,4 +1,7 @@
-import { Button } from "@/components/ui/button";
+import Button from "@/components/fragment/button/button";
+import Input from "@/components/fragment/input/input";
+import type { Option } from "@/components/fragment/select/select";
+import Select from "@/components/fragment/select/select";
 import {
   Dialog,
   DialogContent,
@@ -6,24 +9,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Form, FormField, FormMessage } from "@/components/ui/form";
+
 import { Spinner } from "@/components/ui/spinner";
 import {
   useCreatePosition,
@@ -45,6 +33,16 @@ export default function PositionCreate({ parentId }: Props) {
   console.log("PositionCreate rendered with parentId:", parentId);
   const [token] = useLocalStorage("token", "");
   const { data: positions } = useGetPosition(token, { size: 100 });
+
+  const options: Option[] =
+    positions?.data?.map((position) => {
+      const level = getLevel(position);
+
+      return {
+        value: position.id,
+        label: `${"→ ".repeat(level)} ${position.name}`,
+      };
+    }) ?? [];
 
   const form = useForm<z.infer<typeof CreatePositionSchema>>({
     resolver: zodResolver(CreatePositionSchema),
@@ -69,8 +67,8 @@ export default function PositionCreate({ parentId }: Props) {
             <Plus className="w-4 h-4 text-white" />
           </div>
         ) : (
-          <Button>
-            <PlusSquare />
+          <Button variant="secondary" size="sm" className="gap-2">
+            <PlusSquare size={20} />
             Tambah Jabatan
           </Button>
         )}
@@ -88,15 +86,12 @@ export default function PositionCreate({ parentId }: Props) {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
+                  <Field>
+                    <FieldLabel>
                       Nama Jabatan <span className="text-red-900">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                    </FieldLabel>
+                    <Input label="Jabatan" type="text" {...field} />
+                  </Field>
                 )}
               />
 
@@ -105,53 +100,30 @@ export default function PositionCreate({ parentId }: Props) {
                   control={form.control}
                   name="parent_id"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Induk</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value ?? ""}
-                          onValueChange={(value) =>
-                            field.onChange(value === "" ? null : value)
-                          }
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a parent" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Induk </SelectLabel>
-
-                              {positions?.data?.map((position, index) => {
-                                const level = getLevel(position);
-                                return (
-                                  <SelectItem key={index} value={position.id}>
-                                    <span className="mr-2 text-gray-400">
-                                      {"→ ".repeat(level)}
-                                    </span>
-                                    <span className="font-medium">
-                                      {position.name}
-                                    </span>
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                    <Field>
+                      <FieldLabel>Induk</FieldLabel>
+                      <Select
+                        options={options}
+                        label="Induk"
+                        value={field.value || ""}
+                        onChange={(val) => field.onChange(val)}
+                      />
                       <FormMessage />
-                    </FormItem>
+                    </Field>
                   )}
                 />
               )}
 
               <div className="flex justify-end w-full">
                 {mutation.isPending ? (
-                  <Button disabled size="sm">
+                  <Button variant="secondary" disabled>
                     <Spinner />
                     Loading...
                   </Button>
                 ) : (
-                  <Button type="submit">Simpan</Button>
+                  <Button variant="secondary" type="submit">
+                    Simpan
+                  </Button>
                 )}
               </div>
             </form>

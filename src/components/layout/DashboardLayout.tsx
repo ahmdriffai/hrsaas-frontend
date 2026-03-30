@@ -142,25 +142,18 @@ export default function DashboardLayout(): React.ReactNode {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <div className="px-4 lg:px-6">
+              <div className="flex flex-1 flex-col px-6 gap-6 ">
                 <Toaster richColors position="top-center" />
                 <Outlet />
               </div>
             </div>
           </div>
         </div>
-        <footer className="p-4 border-t flex justify-between items-center">
-          <p className="text-xs">© 2025 Developed by Makaryoo.com</p>
-          <div className="flex gap-x-2">
-            <a
-              href="https://apps.apple.com/gb/app/apple-store/id375380948"
-              target="_blank"
-            >
-              <img src="./getin-as.png" className="w-20" alt="" />
-            </a>
-            <a href="https://play.google.com/store/games?hl=en" target="_blank">
-              <img src="./getin-gp.png" className="w-20" alt="" />
-            </a>
+        <footer className="flex items-center justify-between px-6 py-4 text-xs text-gray-400 border-t border-gray-100">
+          <p>© 2025 Makaryoo</p>
+          <div className="flex gap-2 opacity-70">
+            <img src="./getin-as.png" className="h-6" />
+            <img src="./getin-gp.png" className="h-6" />
           </div>
         </footer>
       </SidebarInset>
@@ -176,12 +169,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Building className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Makaryoo</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                <div className="flex items-center gap-3 px-3 py-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
+                    <Building className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-sm font-semibold text-gray-900">
+                      Makaryoo
+                    </span>
+                    <span className="text-xs text-gray-400">Enterprise</span>
+                  </div>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -246,15 +243,25 @@ export function NavMain({
               {item.items ? (
                 <SidebarMenuItem>
                   <CollapsibleTrigger
-                    className={`py-5 ${
+                    className={`py-2.5 ${
                       hasActiveChild
                         ? "bg-sidebar-accent text-primary font-medium"
                         : ""
                     }`}
                     asChild
                   >
-                    <SidebarMenuButton className="text-sm" tooltip={item.title}>
-                      {item.icon && <item.icon />}
+                    <SidebarMenuButton
+                      className={clsx(
+                        "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition",
+                        "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+                        isActive(item.url) &&
+                          "bg-gray-100 text-gray-900 font-medium",
+                      )}
+                      tooltip={item.title}
+                    >
+                      {item.icon && (
+                        <item.icon className="h-4 w-4 text-gray-400" />
+                      )}
                       <span>{item.title}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
@@ -264,11 +271,12 @@ export function NavMain({
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton
-                            className={`${
-                              isActive(subItem.url)
-                                ? "text-primary font-medium"
-                                : ""
-                            }`}
+                            className={clsx(
+                              "pl-9 py-1.5 text-sm text-gray-500",
+                              "hover:text-gray-900",
+                              isActive(subItem.url) &&
+                                "text-gray-900 font-medium",
+                            )}
                             asChild
                           >
                             <Link className="text-sm" to={subItem.url}>
@@ -284,15 +292,18 @@ export function NavMain({
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className={`py-5 ${
-                      isActive(item.url)
-                        ? "bg-sidebar-accent text-primary font-medium"
-                        : ""
-                    }`}
+                    className={clsx(
+                      "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition",
+                      "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+                      isActive(item.url) &&
+                        "bg-gray-100 text-gray-900 font-medium",
+                    )}
                     tooltip={item.title}
                   >
                     <Link to={item.url}>
-                      {item.icon && <item.icon />}
+                      {item.icon && (
+                        <item.icon className="h-4 w-4 text-gray-400" />
+                      )}
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -309,9 +320,9 @@ export function NavMain({
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { userCurrent } from "@/lib/api/user.api";
+import clsx from "clsx";
 import { ModeToggle } from "../mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -330,26 +341,24 @@ export function SiteHeader() {
     avatar: "aa",
   };
   return (
-    <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height) py-8">
+    <header className="flex h-16 items-center border-b border-gray-100 bg-white px-6">
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6 ">
         <SidebarTrigger className="-ml-1" />
         <Separator
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-base font-medium">Documents</h1>
+        <h1 className="text-sm font-medium text-gray-700">Documents</h1>
         <div className="ml-auto flex items-center gap-2 ">
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Avatar className="h-8 w-8 rounded-sm cursor-pointer">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-sm text-sm">
-                    CN
-                  </AvatarFallback>{" "}
+              <button className="flex items-center rounded-full hover:bg-gray-100 p-1 transition">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.avatar} />
+                  <AvatarFallback>AR</AvatarFallback>
                 </Avatar>
-              </Button>
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"

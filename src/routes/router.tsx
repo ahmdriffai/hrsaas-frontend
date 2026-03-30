@@ -4,17 +4,18 @@ import NotFound from "../components/layout/NotFound";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Layout from "@/components/layout/Layout";
-import ShiftPage from "@/pages/shift/ShiftPage";
 import UserLogin from "@/pages/auth/UserLogin";
 import UserLogout from "@/pages/auth/UserLogout";
 import UserRegister from "@/pages/auth/UserRegister";
 import DashboardPage from "@/pages/DashboardPage";
+import EmployeeCreatePage from "@/pages/employee/EmployeeCreatePage";
 import EmployeePage from "@/pages/employee/EmployeePage";
 import OfficeLocationPage from "@/pages/office-location/OfficeLocationPage";
 import PositionPage from "@/pages/position/PositionPage";
 import PositionVisualPage from "@/pages/position/PositionVisualPage";
 import SanctionTypePage from "@/pages/sanction/sanction-type/SanctionTypePage";
 import SanctionPage from "@/pages/sanction/SanctionPage";
+import ShiftPage from "@/pages/shift/ShiftPage";
 import Home from "../feature/home/Home";
 
 export default function AppRouter() {
@@ -33,6 +34,7 @@ export default function AppRouter() {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="employees">
             <Route index element={<EmployeePage />} />
+            <Route path="create" element={<EmployeeCreatePage />} />
           </Route>
           <Route path="positions">
             <Route index element={<PositionPage />}></Route>

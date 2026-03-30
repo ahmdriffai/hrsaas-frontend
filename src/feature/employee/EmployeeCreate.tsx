@@ -1,12 +1,7 @@
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import Button from "@/components/fragment/button/button";
+import Input from "@/components/fragment/input/input";
+import InputDate from "@/components/fragment/input/input-date";
+import Select from "@/components/fragment/select/select";
 import {
   Form,
   FormControl,
@@ -15,25 +10,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Spinner } from "@/components/ui/spinner";
 import { employeeCreate } from "@/lib/api/employee.api";
 import { blood_type, maritalStatus, religion } from "@/lib/data";
 import { CreateEmployeeScheme } from "@/lib/model/employee.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { PlusSquare } from "lucide-react";
 import type React from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
 import z from "zod";
@@ -41,6 +28,8 @@ import z from "zod";
 export default function EmployeeCreate(): React.ReactNode {
   const [token] = useLocalStorage("token", "");
   const queryClient = useQueryClient();
+  const [dateSelected, setDateSelected] = useState<Date | undefined>(undefined);
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof CreateEmployeeScheme>>({
     resolver: zodResolver(CreateEmployeeScheme),
@@ -59,6 +48,12 @@ export default function EmployeeCreate(): React.ReactNode {
     },
   });
 
+  useEffect(() => {
+    if (dateSelected) {
+      form.setValue("birth_date", dateSelected.toISOString().split("T")[0]);
+    }
+  }, [dateSelected, form]);
+
   const mutation = useMutation({
     mutationFn: (data: z.infer<typeof CreateEmployeeScheme>) =>
       employeeCreate(token ?? "", data),
@@ -68,6 +63,7 @@ export default function EmployeeCreate(): React.ReactNode {
       if (response.status === 200) {
         toast.success("Employee created successfully");
         form.reset();
+        navigate("/employees");
       } else {
         await toast.error(responseBody.error);
       }
@@ -82,238 +78,186 @@ export default function EmployeeCreate(): React.ReactNode {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusSquare />
-          Tambah Karyawan
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Tambah Data Karyawan</DialogTitle>
-          <DialogDescription>
-            Silakan lengkapi data karyawan baru pada form berikut. Informasi
-            yang Anda masukkan akan membantu sistem dalam mengelola data
-            karyawan secara akurat.
-          </DialogDescription>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="mt-3 space-y-6"
+      >
+        <FormField
+          control={form.control}
+          name="fullname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Nama Lengkap <span className="text-red-900">*</span>
+              </FormLabel>
+              <FormControl>
+                <Input label="Nama Lengkap" type="text" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleSubmit)}
-              className="mt-3 space-y-6"
-            >
-              <FormField
-                control={form.control}
-                name="fullname"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Nama Lengkap <span className="text-red-900">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <FormField
+          control={form.control}
+          name="employee_number"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nomer Induk Karyawan</FormLabel>
+              <FormControl>
+                <Input label="Nomer Induk Karyawan" type="text" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-              <FormField
-                control={form.control}
-                name="employee_number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nomer Induk Karyawan</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <div className="grid grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input label="Email" type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <div className="grid grid-cols-2 gap-3">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="text" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input label="Password" type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="birth_place"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tempat Lahir</FormLabel>
+                <FormControl>
+                  <Input label="Tempat Lahir" type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <div className="grid grid-cols-2 gap-3">
-                <FormField
-                  control={form.control}
-                  name="birth_place"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tempat Lahir</FormLabel>
-                      <FormControl>
-                        <Input type="text" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <FormField
+            control={form.control}
+            name="birth_date"
+            render={() => (
+              <FormItem>
+                <FormLabel>Tanggal Lahir</FormLabel>
+                <FormControl>
+                  <InputDate
+                    value={dateSelected}
+                    onChange={(e) => setDateSelected(e)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="blood_type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Golongan Darah</FormLabel>
+                <FormControl>
+                  <Select
+                    label="Golongan Darah"
+                    options={blood_type}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
-                <FormField
-                  control={form.control}
-                  name="birth_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tanggal Lahir</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <FormField
-                  control={form.control}
-                  name="blood_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Golongan Darah</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a religion" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Status Pernikahan</SelectLabel>
-                              {blood_type.map((value, index) => (
-                                <SelectItem key={index} value={value}>
-                                  {value}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+          <FormField
+            control={form.control}
+            name="marital_status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status Pernikahan</FormLabel>
+                <FormControl>
+                  <Select
+                    label="Status Pernikahan"
+                    options={maritalStatus}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nomer Telepopn</FormLabel>
+                <FormControl>
+                  <Input label="Nomer Telepon" type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-                <FormField
-                  control={form.control}
-                  name="marital_status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status Pernikahan</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a religion" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Status Pernikahan</SelectLabel>
-                              {maritalStatus.map((value, index) => (
-                                <SelectItem key={index} value={value}>
-                                  {value}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nomer Telepopn</FormLabel>
-                      <FormControl>
-                        <Input type="text" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="religion"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Agama</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a religion" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Agama</SelectLabel>
-                              {religion.map((value, index) => (
-                                <SelectItem key={index} value={value}>
-                                  {value}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex justify-end w-full">
-                {mutation.isPending ? (
-                  <Button disabled size="sm">
-                    <Spinner />
-                    Loading...
-                  </Button>
-                ) : (
-                  <Button type="submit">Simpan</Button>
-                )}
-              </div>
-            </form>
-          </Form>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
+          <FormField
+            control={form.control}
+            name="religion"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Agama</FormLabel>
+                <FormControl>
+                  <Select
+                    label="Agama"
+                    options={religion}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex justify-end w-full">
+          {mutation.isPending ? (
+            <Button disabled size="sm">
+              <Spinner />
+              Loading...
+            </Button>
+          ) : (
+            <Button type="submit">Simpan</Button>
+          )}
+        </div>
+      </form>
+    </Form>
   );
 }

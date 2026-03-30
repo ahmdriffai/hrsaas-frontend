@@ -1,13 +1,5 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import type { Paging } from "@/lib/types/paging-types";
+import clsx from "clsx";
 
 interface PaginationServerProps {
   paging: Paging;
@@ -20,12 +12,12 @@ export function OwnPagination({
   paging,
   currentPage,
   onPageChange,
-  maxVisible = 2,
+  maxVisible = 3,
 }: PaginationServerProps) {
   const { total_page } = paging;
   const page = currentPage;
 
-  // if (total_page <= 1) return null;
+  if (total_page <= 1) return null;
 
   const half = Math.floor(maxVisible / 2);
   let start = Math.max(1, page - half);
@@ -37,91 +29,76 @@ export function OwnPagination({
 
   const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
+  const baseBtn =
+    "min-w-[36px] h-9 px-3 flex items-center justify-center rounded-full text-sm transition";
+
   return (
-    <Pagination>
-      <PaginationContent>
-        {/* PREV */}
-        <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (page > 1) onPageChange(page - 1);
-            }}
-            className={page === 1 ? "pointer-events-none opacity-50" : ""}
-          />
-        </PaginationItem>
-
-        {/* FIRST */}
-        {start > 1 && (
-          <>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onPageChange(1);
-                }}
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          </>
+    <div className="flex items-center justify-center gap-2 ">
+      {/* PREV */}
+      <button
+        onClick={() => page > 1 && onPageChange(page - 1)}
+        className={clsx(
+          baseBtn,
+          "text-gray-500 hover:bg-gray-100",
+          page === 1 && "opacity-40 pointer-events-none",
         )}
+      >
+        ←
+      </button>
 
-        {/* PAGES */}
-        {pages.map((p) => (
-          <PaginationItem key={p}>
-            <PaginationLink
-              href="#"
-              isActive={p === page}
-              onClick={(e) => {
-                e.preventDefault();
-                onPageChange(p);
-              }}
-            >
-              {p}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
+      {/* FIRST */}
+      {start > 1 && (
+        <>
+          <button
+            onClick={() => onPageChange(1)}
+            className={clsx(baseBtn, "hover:bg-gray-100 text-gray-700")}
+          >
+            1
+          </button>
+          <span className="px-1 text-gray-400">...</span>
+        </>
+      )}
 
-        {/* LAST */}
-        {end < total_page && (
-          <>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onPageChange(total_page);
-                }}
-              >
-                {total_page}
-              </PaginationLink>
-            </PaginationItem>
-          </>
+      {/* PAGES */}
+      {pages.map((p) => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={clsx(
+            baseBtn,
+            p === page
+              ? "bg-gray-900 text-white"
+              : "text-gray-700 hover:bg-gray-100",
+          )}
+        >
+          {p}
+        </button>
+      ))}
+
+      {/* LAST */}
+      {end < total_page && (
+        <>
+          <span className="px-1 text-gray-400">...</span>
+          <button
+            onClick={() => onPageChange(total_page)}
+            className={clsx(baseBtn, "hover:bg-gray-100 text-gray-700")}
+          >
+            {total_page}
+          </button>
+        </>
+      )}
+
+      {/* NEXT */}
+      <button
+        onClick={() => page < total_page && onPageChange(page + 1)}
+        className={clsx(
+          baseBtn,
+          "text-gray-500 hover:bg-gray-100",
+          page === total_page && "opacity-40 pointer-events-none",
         )}
-
-        {/* NEXT */}
-        <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (page < total_page) onPageChange(page + 1);
-            }}
-            className={
-              page === total_page ? "pointer-events-none opacity-50" : ""
-            }
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+      >
+        →
+      </button>
+    </div>
   );
 }

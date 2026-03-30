@@ -1,10 +1,10 @@
+import Button from "@/components/fragment/button/button";
+import SearchForm from "@/components/fragment/search-form/search-form";
 import { Card, CardContent } from "@/components/ui/card";
+import { Eye } from "lucide-react";
 import type { FormEventHandler } from "react";
-import PositionCreate from "./PositionCreate";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
-import { Eye, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import PositionCreate from "./PositionCreate";
 
 interface Props {
   handleSearch: FormEventHandler<HTMLFormElement>;
@@ -12,39 +12,28 @@ interface Props {
   setKey: (value: string) => void;
 }
 
-export default function PositionSearch({ handleSearch, searchKey, setKey }: Props) {
+export default function PositionSearch({
+  handleSearch,
+  searchKey,
+  setKey,
+}: Props) {
   return (
     <Card className="mb-5">
       <CardContent>
         <div className="mb-4 flex gap-4">
           <PositionCreate />
-          <Button asChild>
+          <Button asChild size="sm" variant="secondary">
             <Link to="/positions/visual">
-              <Eye />
+              <Eye size={20} />
               Lihat Visual
             </Link>
           </Button>
         </div>
-        <form
-          onSubmit={handleSearch}
-          className="grid grid-cols-1 gap-4 md:grid-cols-4"
-        >
-          <div className="space-y-1">
-            <Input
-              id="name"
-              placeholder="Cari ..."
-              value={searchKey}
-              onChange={(e) => setKey(e.target.value)}
-            />
-          </div>
-
-          <div className="flex items-end gap-2">
-            <Button type="submit" className="gap-2">
-              <Search className="h-4 w-4" />
-              Search
-            </Button>
-          </div>
-        </form>
+        <SearchForm
+          onSearch={handleSearch}
+          searchKey={searchKey}
+          setKey={setKey}
+        />
       </CardContent>
     </Card>
   );
