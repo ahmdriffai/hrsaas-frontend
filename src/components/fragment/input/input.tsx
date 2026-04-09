@@ -11,6 +11,8 @@ type Props = {
   prefix?: string;
   onFocus?: () => void;
   onBlur?: () => void;
+  readonly?: boolean;
+  disabled?: boolean;
 };
 
 export default function Input({
@@ -22,6 +24,8 @@ export default function Input({
   onFocus,
   onBlur,
   prefix,
+  readonly,
+  disabled,
 }: Props) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -32,8 +36,11 @@ export default function Input({
       {/* Wrapper */}
       <div
         className={clsx(
-          "flex items-center rounded-xl border px-4 pt-6 pb-2 transition-all",
-          isFocused ? "border-black" : "border-gray-300",
+          "flex items-center rounded-xl border px-4 pt-6 pb-1.5 transition-all",
+          {
+            "bg-gray-200": disabled,
+          },
+          isFocused ? "border-black" : "border-gray-400",
         )}
       >
         {/* Prefix */}
@@ -43,6 +50,7 @@ export default function Input({
 
         {/* Input */}
         <input
+          disabled={disabled}
           value={value === 0 ? "" : value}
           type={type}
           onChange={(e) => onChange?.(e.target.value)}
@@ -54,7 +62,8 @@ export default function Input({
             setIsFocused(false);
             onBlur?.();
           }}
-          className="text-md appearance-none w-full bg-transparent outline-none"
+          className="text-md appearance-none w-full bg-transparent outline-none disabled:bg-gray-200"
+          readOnly={readonly}
         />
       </div>
 

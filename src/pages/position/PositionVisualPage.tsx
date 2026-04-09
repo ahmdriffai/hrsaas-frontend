@@ -7,12 +7,6 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
 import { useLocalStorage } from "react-use";
 
-const breadcrumbs = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Posisi Karyawan", href: "/positions" },
-  { label: "Visualisasi" },
-];
-
 export default function PositionVisualPage() {
   useDocumentTitle("Daftar Posisi Karyawan - Visual");
   const [token] = useLocalStorage("token", "");
@@ -23,7 +17,7 @@ export default function PositionVisualPage() {
 
   return (
     <div>
-      <Title title="Data Posisi Karyawan" breadcrumbs={breadcrumbs} />
+      <Title title="Data Posisi Karyawan" />
       <Button asChild className="mb-4">
         <Link to="/positions">
           <ArrowLeft /> Kembali

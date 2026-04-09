@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import Button from "@/components/fragment/button/button";
 import {
   Dialog,
   DialogContent,
@@ -33,7 +33,6 @@ import {
 } from "@/hooks/feature/use-sanction";
 import { CreateSanctionSchema } from "@/lib/model/sanction.model";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "react-use";
 import type z from "zod";
@@ -67,14 +66,11 @@ export default function SanctionCreate() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <PlusSquare />
-          Tambah Pelanggaran
-        </Button>
+        <Button variant="secondary">Tambah pelanggaran</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Tambah Jenis Peringatan</DialogTitle>
+          <DialogTitle>Tambah jenis peringatan</DialogTitle>
 
           <Form {...form}>
             <form

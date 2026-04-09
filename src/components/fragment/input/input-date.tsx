@@ -17,23 +17,29 @@ export default function InputDate({ label = "Date", value, onChange }: Props) {
   };
 
   return (
-    <div className="relative">
+    <div className="">
       <Input
         label={label}
         value={formatDate(value)}
         onFocus={() => setOpen(true)}
+        readonly
       />
 
       {open && (
-        <div className="absolute z-10 mt-2 ">
-          <DatePicker
-            classname="shadow-xl"
-            value={value}
-            onChange={(date: Date) => {
-              onChange?.(date);
-              setOpen(false);
-            }}
-          />
+        <div
+          className="fixed bg-black/30 w-full flex item-center justify-center h-screen left-0 top-0 z-50"
+          onClick={() => setOpen(false)}
+        >
+          <div className="w-full flex items-center justify-center">
+            <DatePicker
+              classname="shadow-xl"
+              value={value}
+              onChange={(date: Date) => {
+                onChange?.(date);
+                setOpen(false);
+              }}
+            />
+          </div>
         </div>
       )}
     </div>

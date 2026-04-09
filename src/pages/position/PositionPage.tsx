@@ -8,11 +8,6 @@ import type React from "react";
 import { useState } from "react";
 import { useLocalStorage } from "react-use";
 
-const breadcrumbs = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Posisi Karyawan", href: "/positions" },
-];
-
 export default function PositionPage(): React.ReactNode {
   useDocumentTitle("Daftar Posisi Karyawan");
   const [token] = useLocalStorage("token", "");
@@ -35,7 +30,7 @@ export default function PositionPage(): React.ReactNode {
 
   return (
     <div>
-      <Title title="Data Posisi Karyawan" breadcrumbs={breadcrumbs} />
+      <Title title="Data posisi paryawan" />
       <PositionSearch
         handleSearch={handleSearch}
         searchKey={key}

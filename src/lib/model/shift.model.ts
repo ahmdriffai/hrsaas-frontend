@@ -1,4 +1,5 @@
 import z from "zod";
+import type { Employee } from "./employee.model";
 
 export type SearchShiftRequest = {
   key?: string;
@@ -14,6 +15,7 @@ export type Shift = {
   name: string;
   late_tolerance: number;
   shift_days: ShiftDay[];
+  employees: Employee[];
   created_at: string;
   updated_at: string;
 };
@@ -27,6 +29,11 @@ export type ShiftDay = {
   break_end?: string;
   max_break_minutes?: number;
 };
+
+export const ShiftAssignEmployeeSchema = z.object({
+  employee_id: z.string(),
+  shift_id: z.string(),
+});
 
 export const CreateShiftSchema = z.object({
   name: z.string().min(1),

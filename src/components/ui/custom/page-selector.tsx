@@ -20,13 +20,13 @@ interface PageSelectorProps {
 export function PageSelector({
   value,
   onValueChange,
-  options = [1, 10, 25, 50, 100],
+  options = [5, 10, 25, 50, 100],
   label = "Rows per page",
   placeholder = "Select",
   className,
 }: PageSelectorProps) {
   return (
-    <div className="flex items-center gap-3 text-sm text-gray-600">
+    <div className="flex items-center gap-3 text-sm justify-center text-gray-600">
       {/* LABEL */}
       <span className="whitespace-nowrap">{label}</span>
 

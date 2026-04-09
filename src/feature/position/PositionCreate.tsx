@@ -20,7 +20,7 @@ import {
 import { CreatePositionSchema } from "@/lib/model/position.model";
 import { getLevel } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, PlusSquare } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "react-use";
 import type z from "zod";
@@ -56,7 +56,6 @@ export default function PositionCreate({ parentId }: Props) {
 
   async function handleSubmit(values: z.infer<typeof CreatePositionSchema>) {
     mutation.mutate(values);
-    form.reset();
   }
 
   return (
@@ -67,8 +66,7 @@ export default function PositionCreate({ parentId }: Props) {
             <Plus className="w-4 h-4 text-white" />
           </div>
         ) : (
-          <Button variant="secondary" size="sm" className="gap-2">
-            <PlusSquare size={20} />
+          <Button variant="secondary" className="gap-2">
             Tambah Jabatan
           </Button>
         )}

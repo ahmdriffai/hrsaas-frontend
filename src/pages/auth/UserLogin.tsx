@@ -21,6 +21,8 @@ export default function UserLogin(): React.ReactNode {
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
   const [, setToken] = useLocalStorage("token", "");
+  const [, setUser] = useLocalStorage("user", "");
+
   const mutation = useMutation({
     mutationFn: userLogin,
     onSuccess: async (response) => {
@@ -36,7 +38,7 @@ export default function UserLogin(): React.ReactNode {
         toast.success("User login successfully");
         const token = responseBody.data.token;
         setToken(token);
-
+        setUser(JSON.stringify(user));
         await navigate({
           pathname: "/dashboard",
         });

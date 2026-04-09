@@ -1,9 +1,12 @@
+import Button from "@/components/fragment/button/button";
 import Table from "@/components/fragment/table/table";
 import { OwnPagination } from "@/components/ui/custom/ownpagination";
 import { PageSelector } from "@/components/ui/custom/page-selector";
 import type { Employee } from "@/lib/model/employee.model";
 import type { PaginatedData } from "@/lib/types/types";
+import { BadgeCheck, FileText } from "lucide-react";
 import type React from "react";
+import { Link } from "react-router";
 
 interface Props {
   data: PaginatedData<Employee> | undefined;
@@ -29,48 +32,57 @@ export default function EmployeeList({
           {
             header: "Name",
             accessor: (row) => (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-start gap-3 min-w-50">
                 <div className="h-9 w-9 rounded-full bg-gray-200 flex justify-center items-center">
                   {row.fullname.charAt(0).toUpperCase()}
                 </div>
-                <span className="font-medium">{row.fullname}</span>
+                <span className="font-medium ">{row.fullname}</span>
+                <span>
+                  <BadgeCheck size={15} color="green" />
+                </span>
               </div>
             ),
           },
           {
-            header: "Nomer Induk",
+            header: "Identitas",
             accessor: "employee_number",
           },
+
           {
-            header: "Tempat Lahir",
-            accessor: "birth_place",
+            header: "Dokumen",
+            accessor: () => (
+              <Button variant="ghost">
+                <Link to="/employee/files">
+                  <FileText strokeWidth={1.25} size={20} />
+                </Link>
+              </Button>
+            ),
           },
-          {
-            header: "Tanggal Lahir",
-            accessor: (row) => new Date(row.birth_date).toDateString(),
-          },
-          {
-            header: "Status",
-            accessor: "marital_status",
-          },
+
           {
             header: "Action",
             accessor: () => (
-              <button className="text-sm text-gray-500 hover:text-black">
-                Edit
-              </button>
+              <div className="flex items-center gap-2">
+                <Button variant="link" asChild>
+                  <Link to="/employees/edit">Detail</Link>
+                </Button>
+
+                <Button variant="link" className="text-destructive! " asChild>
+                  <Link to="/employees/edit">Delete</Link>
+                </Button>
+              </div>
             ),
             className: "text-right",
           },
         ]}
       />
-      <div className="flex justify-between items-center mt-5">
-        <p className="font-bold text-xs">
-          Menampilkan {data?.data.length} dari {data?.paging.total_item} total
-          data.
-        </p>
-        {data && (
-          <div className="flex items-center justify-center gap-x-1">
+      {data && (
+        <div className="flex flex-col w-full gap-5 justify-cente items-end mt-5">
+          <div className="flex w-full items-center justify-between gap-x-1">
+            <p className="font-bold text-xs">
+              Menampilkan {data?.data.length} dari {data?.paging.total_item}{" "}
+              total data.
+            </p>
             <PageSelector
               onValueChange={(value) => {
                 setSize(value);
@@ -78,14 +90,14 @@ export default function EmployeeList({
               }}
               value={size}
             />
-            <OwnPagination
-              currentPage={page}
-              paging={data.paging}
-              onPageChange={setPage}
-            />
           </div>
-        )}
-      </div>
+          <OwnPagination
+            currentPage={page}
+            paging={data.paging}
+            onPageChange={setPage}
+          />
+        </div>
+      )}
     </div>
   );
 }

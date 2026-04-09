@@ -1,14 +1,11 @@
+import Button from "@/components/fragment/button/button";
 import Title from "@/components/layout/Title";
 import ShiftList from "@/feature/shift/ShiftList";
 import { useGetShift } from "@/hooks/feature/use-shift";
 import type { SearchShiftRequest } from "@/lib/model/shift.model";
 import { useState } from "react";
+import { Link } from "react-router";
 import { useLocalStorage } from "react-use";
-
-const breadcrumbs = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Manajemen Shift", href: "/shifts" },
-];
 
 export default function ShiftPage() {
   const [token] = useLocalStorage("token", "");
@@ -25,7 +22,10 @@ export default function ShiftPage() {
 
   return (
     <div>
-      <Title title="Data Shift" breadcrumbs={breadcrumbs} />
+      <Title title="Pengaturan shift" />
+      <Button asChild variant="secondary" size="md">
+        <Link to="/attendances/shifts/create">Tambah shift</Link>
+      </Button>
       <ShiftList
         data={data}
         page={page}

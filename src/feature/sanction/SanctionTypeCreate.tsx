@@ -1,4 +1,7 @@
-import { Button } from "@/components/ui/button";
+import Button from "@/components/fragment/button/button";
+import Input from "@/components/fragment/input/input";
+import Select from "@/components/fragment/select/select";
+import Textarea from "@/components/fragment/textarea/text-area";
 import {
   Dialog,
   DialogContent,
@@ -14,24 +17,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
+
 import { sanctionTypeCreate } from "@/lib/api/sanction.api";
-import { sanctionLevel } from "@/lib/data";
 import { CreateSanctionTypeSchema } from "@/lib/model/sanction.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { PlusSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
@@ -79,14 +71,11 @@ export default function SanctionTypeCreate() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <PlusSquare />
-          Jenis Sanksi / Peringatan
-        </Button>
+        <Button variant="secondary">Tambah jenis peringatan</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Tambah Jenis Peringatan</DialogTitle>
+          <DialogTitle>Tambah jenis peringatan</DialogTitle>
 
           <Form {...form}>
             <form
@@ -102,7 +91,7 @@ export default function SanctionTypeCreate() {
                       Nama Sanksi <span className="text-red-900">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="text" {...field} />
+                      <Input label="Nama tipe sanksi" type="text" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,27 +106,15 @@ export default function SanctionTypeCreate() {
                     <FormLabel>Level</FormLabel>
                     <FormControl>
                       <Select
-                        value={field.value.toString()}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a religion" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Level Sanksi</SelectLabel>
-                            {sanctionLevel.map((value, index) => (
-                              <SelectItem key={index} value={value.toString()}>
-                                {value === 1
-                                  ? "Ringan"
-                                  : value === 2
-                                    ? "Sedang"
-                                    : "Berat"}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
+                        label="Level pelanggaran"
+                        options={[
+                          { label: "ringan", value: "Ringan" },
+                          { label: "sedang", value: "Sedang" },
+                          { label: "berat", value: "Berat" },
+                        ]}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                   </FormItem>
                 )}

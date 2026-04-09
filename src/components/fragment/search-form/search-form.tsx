@@ -8,7 +8,7 @@ interface Props {
 export default function SearchForm({ onSearch, searchKey, setKey }: Props) {
   return (
     <form onSubmit={onSearch} className="w-full max-w-xl">
-      <div className="flex items-center rounded-full border border-gray-300 px-4 py-2 focus-within:border-gray-400">
+      <div className="flex items-center rounded-full border border-gray-300 px-4 py-4 focus-within:border-gray-400">
         <Search className="h-4 w-4 text-gray-400 mr-2" />
         <input
           placeholder="Search..."

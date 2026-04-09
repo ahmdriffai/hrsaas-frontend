@@ -24,3 +24,13 @@ export const maritalStatus: Option[] = [
 ];
 
 export const sanctionLevel: number[] = [1, 2, 3];
+
+export const days = [
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu",
+  "Minggu",
+];

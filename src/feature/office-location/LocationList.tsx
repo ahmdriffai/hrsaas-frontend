@@ -1,17 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card";
+import Button from "@/components/fragment/button/button";
+import Table from "@/components/fragment/table/table";
 import { OwnPagination } from "@/components/ui/custom/ownpagination";
 import { PageSelector } from "@/components/ui/custom/page-selector";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type { OfficeLocation } from "@/lib/types/officelocation-type";
+import type { OfficeLocation } from "@/lib/model/office-location.model";
 import type { PaginatedData } from "@/lib/types/types";
 import type React from "react";
+import { Link } from "react-router";
 
 interface Props {
   data: PaginatedData<OfficeLocation> | undefined;
@@ -29,69 +23,70 @@ export default function LocationList({
   setSize,
 }: Props): React.ReactNode {
   return (
-    <Card>
-      <CardContent>
-        <div className="mt-6 rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nama Lokasi</TableHead>
-                <TableHead>Latitude</TableHead>
-                <TableHead>Longitude</TableHead>
-                <TableHead>Radius (m)</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data?.data && data.data.length > 0 ? (
-                data.data.map((location) => (
-                  <TableRow key={location.id}>
-                    <TableCell className="font-medium">
-                      {location.name}
-                    </TableCell>
-                    <TableCell>{location.lat}</TableCell>
-                    <TableCell>{location.lng}</TableCell>
-                    <TableCell>{location.radius_meters}</TableCell>
-                    <TableCell>
-                      {location.is_active ? "Aktif" : "Nonaktif"}
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    No data available
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+    <div>
+      <Table
+        data={data?.data || []}
+        keyExtractor={(row) => row.id}
+        columns={[
+          {
+            header: "Name",
+            accessor: (row) => (
+              <span className="font-semibold">{row.name}</span>
+            ),
+          },
+          {
+            header: "Alamat",
+            accessor: (row) => (
+              <span className="font-light text-xs">{row.address}</span>
+            ),
+          },
+          {
+            header: "Radius",
+            accessor: (row) => <p>{row.radius_meters} m</p>,
+          },
+          {
+            header: "Action",
+            accessor: (row) => (
+              <div className="flex items-center justify-end gap-2">
+                <Button variant="secondary" size="sm" asChild>
+                  <Link
+                    to={`/attendances/office-locations/assign-employee/${row.id}`}
+                  >
+                    Tugaskan
+                  </Link>
+                </Button>
 
-        <div className="mt-5 flex items-center justify-between">
-          <p className="text-xs font-bold">
-            Menampilkan {data?.data.length ?? 0} dari{" "}
-            {data?.paging.total_item ?? 0} total data.
-          </p>
-
-          {data && (
-            <div className="flex items-center justify-center gap-x-1">
-              <PageSelector
-                onValueChange={(value) => {
-                  setSize(value);
-                  setPage(1);
-                }}
-                value={size}
-              />
-              <OwnPagination
-                currentPage={page}
-                paging={data.paging}
-                onPageChange={setPage}
-              />
-            </div>
-          )}
+                <Button variant="link" className="text-destructive! " asChild>
+                  <Link to="/employees/edit">Delete</Link>
+                </Button>
+              </div>
+            ),
+            className: "text-right",
+          },
+        ]}
+      />
+      {data && (
+        <div className="flex flex-col w-full gap-5 justify-cente items-end mt-5">
+          <div className="flex w-full items-center justify-between gap-x-1">
+            <p className="font-bold text-xs">
+              Menampilkan {data?.data.length} dari {data?.paging.total_item}{" "}
+              total data.
+            </p>
+            <PageSelector
+              onValueChange={(value) => {
+                setSize(value);
+                setPage(1);
+              }}
+              value={size}
+            />
+          </div>
+          <OwnPagination
+            currentPage={page}
+            paging={data.paging}
+            onPageChange={setPage}
+          />
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }

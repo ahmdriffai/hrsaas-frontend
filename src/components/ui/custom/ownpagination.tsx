@@ -1,5 +1,6 @@
 import type { Paging } from "@/lib/types/paging-types";
 import clsx from "clsx";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PaginationServerProps {
   paging: Paging;
@@ -43,7 +44,7 @@ export function OwnPagination({
           page === 1 && "opacity-40 pointer-events-none",
         )}
       >
-        ←
+        <ChevronLeft strokeWidth={1.5} size={20} />
       </button>
 
       {/* FIRST */}
@@ -97,7 +98,7 @@ export function OwnPagination({
           page === total_page && "opacity-40 pointer-events-none",
         )}
       >
-        →
+        <ChevronRight strokeWidth={1.5} size={20} />
       </button>
     </div>
   );

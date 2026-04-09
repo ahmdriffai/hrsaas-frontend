@@ -1,20 +1,13 @@
+import SearchForm from "@/components/fragment/search-form/search-form";
 import Title from "@/components/layout/Title";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import LocationCreate from "@/feature/office-location/LocationCreate";
 import LocationList from "@/feature/office-location/LocationList";
 import { useGetOfficeLocation } from "@/hooks/feature/use-office-location";
 import { useDocumentTitle } from "@/hooks/user-titledoc";
 import type { SearchOfficeLocationRequest } from "@/lib/model/office-location.model";
-import { Search } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { useLocalStorage } from "react-use";
-
-const breadcrumbs = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Lokasi Kantor", href: "/office-locations" },
-];
 
 export default function OfficeLocationPage(): React.ReactNode {
   useDocumentTitle("Daftar Lokasi Kantor");
@@ -40,30 +33,12 @@ export default function OfficeLocationPage(): React.ReactNode {
 
   return (
     <div>
-      <Title title="Data Lokasi Kantor" breadcrumbs={breadcrumbs} />
-      <div className="mb-5 rounded-lg border bg-card p-4">
+      <Title title="Pengaturan lokasi kantor" />
+      <div className="mb-5">
         <div className="mb-4 flex gap-4">
           <LocationCreate />
         </div>
-
-        <form
-          onSubmit={handleSearch}
-          className="grid grid-cols-1 gap-4 md:grid-cols-4"
-        >
-          <Input
-            id="office-location-search"
-            placeholder="Cari lokasi kantor ..."
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
-          />
-
-          <div className="flex items-end gap-2">
-            <Button type="submit" className="gap-2">
-              <Search size={16} />
-              Cari
-            </Button>
-          </div>
-        </form>
+        <SearchForm onSearch={handleSearch} searchKey={key} setKey={setKey} />
       </div>
 
       <LocationList

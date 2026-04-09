@@ -17,3 +17,15 @@ export function getLevel(position: Position): number {
 
   return level;
 }
+
+export default function toIDDate(date: Date) {
+  // Format date for US English in a long style
+  const formattedID = new Intl.DateTimeFormat("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+
+  return formattedID;
+}

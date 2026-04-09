@@ -14,6 +14,7 @@ import {
 import type { Position } from "@/lib/types/position.type";
 import type { PaginatedData } from "@/lib/types/types";
 import { getLevel } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 interface Props {
   data: PaginatedData<Position> | undefined;
@@ -42,8 +43,10 @@ export default function PositionList({
               const level = getLevel(row);
               return (
                 <div className="flex items-center gap-3">
-                  <span className="mr-2 text-gray-400">
-                    {"→ ".repeat(level)}
+                  <span className="mr-2 text-gray-300 flex">
+                    {Array.from({ length: level }).map((_, i) => (
+                      <ArrowRight size={15} strokeWidth={3} key={i} />
+                    ))}
                   </span>
                   <span className="font-medium">{row.name}</span>
                 </div>

@@ -1,18 +1,15 @@
+import Button from "@/components/fragment/button/button";
 import Title from "@/components/layout/Title";
 import SanctionTypeList from "@/feature/sanction/SanctionTypeList";
 import SanctionTypeSearch from "@/feature/sanction/SanctionTypeSearch";
 import { useGetSanctionType } from "@/hooks/feature/use-sanction";
 import { useDocumentTitle } from "@/hooks/user-titledoc";
 import type { SearchSanctionTypeReq } from "@/lib/model/sanction.model";
+import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
-
-const breadcrumbs = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Sanksi Karyawan", href: "/employee-sanctions" },
-  { label: "Jenis Sanksi" },
-];
 
 export default function SanctionTypePage() {
   useDocumentTitle("Daftar Sanksi Karyawan");
@@ -40,7 +37,12 @@ export default function SanctionTypePage() {
 
   return (
     <div>
-      <Title title="Data Jenis Sanksi Karyawan" breadcrumbs={breadcrumbs} />
+      <Button asChild variant="third">
+        <Link to="/employee-sanctions">
+          <ArrowLeft />
+        </Link>
+      </Button>
+      <Title title="Pengaturan jenis sanksi" />
       <SanctionTypeSearch
         handleSearch={handleSearch}
         searchKey={key}

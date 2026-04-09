@@ -8,11 +8,6 @@ import { useState } from "react";
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
 
-const breadcrumbs = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Sanksi Karyawan", href: "/employee-sanctions" },
-];
-
 export default function SanctionPage() {
   useDocumentTitle("Daftar Sanksi Karyawan");
   const [key, setKey] = useState("");
@@ -43,7 +38,7 @@ export default function SanctionPage() {
 
   return (
     <div>
-      <Title title="Data Sanksi Karyawan" breadcrumbs={breadcrumbs} />
+      <Title title="Data sanksi karyawan" />
       <SanctionSearch
         handleSearch={handleSearch}
         searchKey={key}

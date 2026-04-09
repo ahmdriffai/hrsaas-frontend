@@ -1,6 +1,6 @@
+import Button from "@/components/fragment/button/button";
 import Title from "@/components/layout/Title";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,7 +12,12 @@ import { useGetEmployee } from "@/hooks/feature/use-employee";
 import { useGetPosition } from "@/hooks/feature/use-position";
 import { useGetSanction } from "@/hooks/feature/use-sanction";
 import { useDocumentTitle } from "@/hooks/user-titledoc";
-import { AlertTriangle, BriefcaseBusiness, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  BriefcaseBusiness,
+  Users,
+  type LucideProps,
+} from "lucide-react";
 import type React from "react";
 import { Link } from "react-router";
 import { useLocalStorage } from "react-use";
@@ -21,7 +26,9 @@ type SummaryCardProps = {
   title: string;
   value: number;
   subtitle: string;
-  icon: React.ReactNode;
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
   loading?: boolean;
 };
 
@@ -32,17 +39,20 @@ function SummaryCard({
   icon,
   loading,
 }: SummaryCardProps): React.ReactNode {
+  const Icon = icon;
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <div className="text-muted-foreground">{icon}</div>
-      </CardHeader>
-      <CardContent>
+    <div className="border rounded-2xl p-6 space-y-2">
+      <div className="flex items-start justify-between">
+        <div className="text-sm font-medium">{title}</div>
+      </div>
+      <div className="flex items-center gap-4">
+        <div className="text-muted-foreground">
+          <Icon className="w-6 h-6 text-zinc-700" />
+        </div>
         <div className="text-2xl font-bold">{loading ? "..." : value}</div>
-        <p className="text-muted-foreground text-xs">{subtitle}</p>
-      </CardContent>
-    </Card>
+      </div>
+      <p className="text-muted-foreground text-xs">{subtitle}</p>
+    </div>
   );
 }
 
@@ -67,34 +77,36 @@ export default function DashboardPage(): React.ReactNode {
           title="Total Karyawan"
           value={employeeTotal}
           subtitle="Karyawan terdaftar"
-          icon={<Users className="size-4" />}
+          icon={Users}
           loading={employeeQuery.isLoading}
         />
         <SummaryCard
           title="Total Posisi"
           value={positionTotal}
           subtitle="Posisi aktif"
-          icon={<BriefcaseBusiness className="size-4" />}
+          icon={BriefcaseBusiness}
           loading={positionQuery.isLoading}
         />
         <SummaryCard
           title="Total Sanksi"
           value={activeSanctionTotal}
           subtitle="Catatan sanksi"
-          icon={<AlertTriangle className="size-4" />}
+          icon={AlertTriangle}
           loading={sanctionQuery.isLoading}
         />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Aksi Cepat</CardTitle>
-          <CardDescription>
+      <hr />
+
+      <div className="space-y-3">
+        <div className="space-y-3">
+          <h3 className="font-bold">Aksi Cepat</h3>
+          <p className="text-sm">
             Akses modul utama HR management dari dashboard.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-3">
-          <Button asChild>
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="outline" asChild>
             <Link to="/employees">Kelola Karyawan</Link>
           </Button>
           <Button asChild variant="outline">
@@ -103,8 +115,8 @@ export default function DashboardPage(): React.ReactNode {
           <Button asChild variant="outline">
             <Link to="/employee-sanctions">Kelola Sanksi</Link>
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {(employeeQuery.isError ||
         positionQuery.isError ||

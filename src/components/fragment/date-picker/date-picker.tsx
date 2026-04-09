@@ -24,6 +24,7 @@ type Props = {
 const days = ["Min", "Sn", "Sl", "R", "Km", "J", "Sb"];
 
 export default function DatePicker({ value, onChange, classname }: Props) {
+  const [mode, setMode] = useState<"date" | "month" | "year">("date");
   const [currentMonth, setCurrentMonth] = useState(value || new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(value || null);
 
@@ -41,17 +42,38 @@ export default function DatePicker({ value, onChange, classname }: Props) {
   const renderHeader = () => (
     <div className="flex items-center justify-between mb-4">
       <Button
-        onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-        className="px-3 py-1 rounded hover:bg-gray-100"
+        type="button"
+        onClick={() => {
+          if (mode === "date") setCurrentMonth(subMonths(currentMonth, 1));
+          else if (mode === "month")
+            setCurrentMonth(subMonths(currentMonth, 12));
+          else if (mode === "year")
+            setCurrentMonth(new Date(currentMonth.getFullYear() - 12, 0));
+        }}
         variant="ghost"
       >
         <ChevronLeft size={20} />
       </Button>
 
-      <div className="font-semibold">{format(currentMonth, "MMMM yyyy")}</div>
+      <div
+        className="font-semibold cursor-pointer"
+        onClick={() => {
+          if (mode === "date") setMode("month");
+          else if (mode === "month") setMode("year");
+        }}
+      >
+        {format(currentMonth, "MMMM yyyy")}
+      </div>
 
       <Button
-        onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+        type="button"
+        onClick={() => {
+          if (mode === "date") setCurrentMonth(addMonths(currentMonth, 1));
+          else if (mode === "month")
+            setCurrentMonth(addMonths(currentMonth, 12));
+          else if (mode === "year")
+            setCurrentMonth(new Date(currentMonth.getFullYear() + 12, 0));
+        }}
         variant="ghost"
       >
         <ChevronRight size={20} />
@@ -66,6 +88,63 @@ export default function DatePicker({ value, onChange, classname }: Props) {
       ))}
     </div>
   );
+
+  const renderMonths = () => {
+    const months = Array.from({ length: 12 });
+
+    return (
+      <div className="grid grid-cols-3 gap-2">
+        {months.map((_, i) => {
+          const monthDate = new Date(currentMonth.getFullYear(), i, 1);
+
+          return (
+            <div
+              key={i}
+              onClick={() => {
+                setCurrentMonth(monthDate);
+                setMode("date");
+              }}
+              className={clsx(
+                "p-2 text-center cursor-pointer rounded-lg hover:bg-gray-100",
+                i === currentMonth.getMonth() && "bg-black text-white",
+              )}
+            >
+              {format(monthDate, "MMM")}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderYears = () => {
+    const year = currentMonth.getFullYear();
+    const startYear = year - 6; // range 12 tahun
+
+    return (
+      <div className="grid grid-cols-3 gap-2">
+        {Array.from({ length: 12 }).map((_, i) => {
+          const y = startYear + i;
+
+          return (
+            <div
+              key={y}
+              onClick={() => {
+                setCurrentMonth(new Date(y, currentMonth.getMonth(), 1));
+                setMode("month");
+              }}
+              className={clsx(
+                "p-2 text-center cursor-pointer rounded-lg hover:bg-gray-100",
+                y === year && "bg-black text-white",
+              )}
+            >
+              {y}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   const renderCells = () => {
     const rows = [];
@@ -108,11 +187,19 @@ export default function DatePicker({ value, onChange, classname }: Props) {
 
   return (
     <div
-      className={clsx("w-full max-w-sm p-4 rounded-2xl bg-white ", classname)}
+      onClick={(e) => e.stopPropagation()}
+      className={clsx("w-xs h-xs p-4 rounded-2xl bg-white  ", classname)}
     >
       {renderHeader()}
-      {renderDays()}
-      {renderCells()}
+      {mode === "date" && (
+        <>
+          {renderDays()}
+          {renderCells()}
+        </>
+      )}
+
+      {mode === "month" && renderMonths()}
+      {mode === "year" && renderYears()}
     </div>
   );
 }

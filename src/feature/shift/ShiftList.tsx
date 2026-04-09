@@ -1,24 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card";
+import Button from "@/components/fragment/button/button";
+import Table from "@/components/fragment/table/table";
 import { OwnPagination } from "@/components/ui/custom/ownpagination";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { PageSelector } from "@/components/ui/custom/page-selector";
 import type { Shift } from "@/lib/model/shift.model";
 import type { PaginatedData } from "@/lib/types/types";
+import { Link } from "react-router";
 
 interface Props {
   data: PaginatedData<Shift> | undefined;
@@ -35,77 +21,61 @@ export default function ShiftList({
   setPage,
   setSize,
 }: Props) {
-  const shifts = data?.data ?? [];
-  const totalItems = data?.paging.total_item ?? 0;
-
   return (
-    <Card>
-      <CardContent>
-        <div className="rounded-md border mt-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nama Shift</TableHead>
-                <TableHead>Toleransi (Menit)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {shifts.length ? (
-                shifts.map((shift) => (
-                  <TableRow key={shift.id}>
-                    <TableCell className="font-medium">{shift.name}</TableCell>
-                    <TableCell>{shift.late_tolerance}</TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={2} className="text-center">
-                    No data available
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+    <div className="mt-5">
+      <Table
+        data={data?.data || []}
+        keyExtractor={(row) => row.id}
+        columns={[
+          {
+            header: "Name",
+            accessor: "name",
+          },
+          {
+            header: "Toleransi keterlambatan",
+            accessor: (row) => <p>{row.late_tolerance} menit</p>,
+          },
+          {
+            header: "Action",
+            accessor: (row) => (
+              <div className="flex items-center gap-2">
+                <Button variant="secondary" size="sm" asChild>
+                  <Link to={`/attendances/shifts/assign-employee/${row.id}`}>
+                    Tugaskan
+                  </Link>
+                </Button>
 
-        <div className="flex justify-between items-center mt-5 gap-3 flex-wrap">
-          <p className="font-bold text-xs">
-            Menampilkan {data?.data?.length ?? 0} dari {totalItems} total data.
-          </p>
-
-          <div className="flex items-center gap-2">
-            <Select
+                <Button variant="ghost" className="text-destructive! " asChild>
+                  <Link to="/delete">Delete</Link>
+                </Button>
+              </div>
+            ),
+            className: "text-right",
+          },
+        ]}
+      />
+      {data && (
+        <div className="flex flex-col w-full gap-5 justify-cente items-end mt-5">
+          <div className="flex w-full items-center justify-between gap-x-1">
+            <p className="font-bold text-xs">
+              Menampilkan {data?.data.length} dari {data?.paging.total_item}{" "}
+              total data.
+            </p>
+            <PageSelector
               onValueChange={(value) => {
                 setSize(value);
                 setPage(1);
               }}
               value={size}
-            >
-              <SelectTrigger className="w-fit text-xs p-1 ps-2">
-                <SelectValue placeholder="Pilih ukuran" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Total</SelectLabel>
-                  {[1, 5, 10, 50].map((value) => (
-                    <SelectItem key={value} value={value.toString()}>
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            {data && (
-              <OwnPagination
-                currentPage={page}
-                paging={data.paging}
-                onPageChange={setPage}
-              />
-            )}
+            />
           </div>
+          <OwnPagination
+            currentPage={page}
+            paging={data.paging}
+            onPageChange={setPage}
+          />
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }

@@ -1,103 +1,220 @@
+import { userCurrent } from "@/lib/api/user.api";
+import clsx from "clsx";
 import {
-  BadgeCheck,
-  Bell,
   Building,
-  CalendarClock,
-  CreditCard,
+  CalendarHeart,
+  ClockFading,
+  DoorClosed,
   Home,
-  LogOut,
-  Settings,
-  Sparkles,
+  MapPinned,
+  Menu,
+  NotebookPen,
+  Search,
+  Settings2,
+  TriangleAlert,
   Users,
+  X,
 } from "lucide-react";
 import type React from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "../ui/sidebar";
+import { useEffectOnce, useLocalStorage } from "react-use";
+import AppleStore from "../../assets/images/getin-as.png";
+import AndroidStore from "../../assets/images/getin-gp.png";
+import Logo from "../ui/logo";
+import { Toaster } from "../ui/sonner";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+const menuItems = [
+  { label: "Dashboard", icon: Home, path: "/dashboard" },
+  { label: "Perusahaan", icon: Building, path: "/companies" },
+  { label: "Data karyawan", icon: Users, path: "/employees" },
+  { label: "Izin & cuti", icon: NotebookPen, path: "/time-offs" },
+  { label: "Kehadiran", icon: CalendarHeart, path: "/attendances" },
+  { label: "Kunjungan", icon: MapPinned, path: "/visits" },
+  { label: "Shift", icon: ClockFading, path: "/shifts" },
+  {
+    label: "Sanksi / pelanggaran",
+    icon: TriangleAlert,
+    path: "/employee-sanctions",
   },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: Home,
-    },
-    {
-      title: "Kelola Karyawan",
-      url: "#",
-      icon: Users,
-      items: [
-        {
-          title: "Divisi",
-          url: "#",
-        },
-        {
-          title: "Jabatan",
-          url: "/positions",
-        },
-        {
-          title: "Data Karyawan",
-          url: "/employees",
-        },
-        {
-          title: "Lokasi Kehadiran",
-          url: "/office-locations",
-        },
-        {
-          title: "Pola Kerja",
-          url: "/shifts",
-        },
-        {
-          title: "Sanksi / Peringatan",
-          url: "/employee-sanctions",
-        },
-      ],
-    },
-    {
-      title: "Kehadiran",
-      url: "#",
-      icon: CalendarClock,
-      items: [
-        {
-          title: "Divisi",
-          url: "#",
-        },
-        {
-          title: "Jabatan",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Pengaturan",
-      url: "#",
-      icon: Settings,
-      items: [
-        {
-          title: "Perusahaan",
-          url: "#",
-        },
-      ],
-    },
-  ],
-};
+  { label: "Pengaturan", icon: Settings2, path: "/settings" },
+
+  // { label: "Log masuk & keamanan", icon: Shield },
+  // { label: "Privasi", icon: Hand },
+  // { label: "Notifikasi", icon: Bell },
+  // { label: "Pajak", icon: Calculator },
+  // { label: "Pembayaran", icon: CreditCard },
+  // { label: "Bahasa & mata uang", icon: Globe },
+  // { label: "Perjalanan bisnis", icon: Briefcase },
+];
+
+// const data = [
+//   {
+//     title: "Dashboard",
+//     url: "/dashboard",
+//     icon: Home,
+//   },
+//   {
+//     title: "Kelola Karyawan",
+//     url: "#",
+//     icon: Users,
+//     items: [
+//       {
+//         title: "Divisi",
+//         url: "#",
+//       },
+//       {
+//         title: "Jabatan",
+//         url: "/positions",
+//       },
+//       {
+//         title: "Data karyawan",
+//         url: "/employees",
+//       },
+//       {
+//         title: "Lokasi kehadiran",
+//         url: "/office-locations",
+//       },
+//       {
+//         title: "Pola Kerja",
+//         url: "/shifts",
+//       },
+//       {
+//         title: "Sanksi / Peringatan",
+//         url: "/employee-sanctions",
+//       },
+//     ],
+//   },
+//   {
+//     title: "Kehadiran",
+//     url: "#",
+//     icon: CalendarClock,
+//     items: [
+//       {
+//         title: "Divisi",
+//         url: "#",
+//       },
+//       {
+//         title: "Jabatan",
+//         url: "#",
+//       },
+//     ],
+//   },
+//   {
+//     title: "Pengaturan",
+//     url: "#",
+//     icon: Settings,
+//     items: [
+//       {
+//         title: "Perusahaan",
+//         url: "#",
+//       },
+//     ],
+//   },
+// ];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function Header({ onMenuClick, user }: { onMenuClick: () => void; user: any }) {
+  return (
+    <header className="sticky top-0 z-50 w-full border-b-[1.5px] border-zinc-100 bg-white px-6 md:px-10 py-6 flex items-center justify-between">
+      {/* Left */}
+      <div className="flex items-center gap-8">
+        <Logo />
+      </div>
+
+      {/* Right */}
+      <div className="flex items-center gap-4">
+        <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-sm">
+          {user?.name.charAt(0).toUpperCase()}
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button className="lg:hidden" onClick={onMenuClick}>
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function SidebarContent() {
+  const [filteredMenu, setFilteredMenu] = useState(menuItems);
+  const [key, setKey] = useState<string>("");
+
+  useEffect(() => {
+    const result = menuItems.filter((el) =>
+      el.label.toLowerCase().includes(key.toLowerCase()),
+    );
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFilteredMenu(result);
+  }, [key]);
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const isActive = (url: string) =>
+    pathname === url || pathname.startsWith(url + "/");
+
+  return (
+    <div className="py-6">
+      <h1 className="text-2xl font-medium mb-3 tracking-wide px-6 md:px-10">
+        Menu admin
+      </h1>
+      <div className="px-6 md:px-10 mb-6">
+        <div className="flex items-center rounded-full border border-gray-300 px-4 py-4 focus-within:border-gray-400">
+          <Search className="h-4 w-4 text-gray-400 mr-2" />
+          <input
+            placeholder="Search menu ..."
+            value={key}
+            onChange={(e) => setKey(e.target.value)}
+            className="w-full bg-transparent outline-none text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2 max-h-[500px] overflow-scroll px-6 md:px-10 transition-all ease-out">
+        {filteredMenu.map((item, index) => {
+          const Icon = item.icon;
+
+          return (
+            <div
+              key={index}
+              className={clsx(
+                "flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all duration-200",
+                isActive(item.path)
+                  ? "bg-zinc-100 font-medium"
+                  : "hover:bg-zinc-50",
+              )}
+              onClick={() => navigate(item.path)}
+            >
+              <Icon
+                className="w-6 h-6 text-zinc-700"
+                strokeWidth={isActive(item.path) ? 2 : 1.5}
+              />
+              <span className="text-base text-zinc-800">{item.label}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="border-t my-3 mx-6 md:mx-10" />
+
+      <div className="flex items-center gap-4 p-4 rounded-2xl cursor-pointer  hover:bg-zinc-50 transition-all mx-6 md:mx-10">
+        <DoorClosed className="w-5 h-5 text-destructive" />
+        <span className="text-base text-destructive">Logout</span>
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardLayout(): React.ReactNode {
+  const [open, setOpen] = useState(false);
   const [token, setToken] = useLocalStorage("token", "");
+  const [user] = useLocalStorage("user", "");
+
   const navigate = useNavigate();
+
+  const userLogin = JSON.parse(user ?? "");
 
   async function validateLogin() {
     if (!token) {
@@ -128,289 +245,59 @@ export default function DashboardLayout(): React.ReactNode {
   });
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <div className="flex flex-1 flex-col px-6 gap-6 ">
-                <Toaster richColors position="top-center" />
-                <Outlet />
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <Header onMenuClick={() => setOpen(true)} user={userLogin} />
+
+      <div className="flex flex-1">
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block w-100 border-r-[1.5px] border-zinc-100 bg-white">
+          <SidebarContent />
+        </aside>
+
+        {/* Mobile Sidebar */}
+        {open && (
+          <div className="fixed inset-0 z-999 flex">
+            {/* Overlay */}
+            <div
+              className="flex-1 bg-black/40"
+              onClick={() => setOpen(false)}
+            />
+
+            {/* Drawer */}
+            <div className="w-72 bg-white h-full shadow-xl">
+              <div className="flex items-center justify-between p-4 ">
+                <button onClick={() => setOpen(false)}>
+                  <X className="w-5 h-5" />
+                </button>
               </div>
+              <SidebarContent />
             </div>
           </div>
-        </div>
-        <footer className="flex items-center justify-between px-6 py-4 text-xs text-gray-400 border-t border-gray-100">
-          <p>© 2025 Makaryoo</p>
-          <div className="flex gap-2 opacity-70">
-            <img src="./getin-as.png" className="h-6" />
-            <img src="./getin-gp.png" className="h-6" />
+        )}
+
+        {/* Content */}
+        <main className="flex-1 p-4 md:p-8 overflow-scroll">
+          <div className="max-w-3xl mx-auto bg-white">
+            <Toaster richColors position="top-center" />
+            <Outlet />
+            <footer className="relative mt-10 w-full bottom-0 flex items-center justify-between px-6 py-5 text-xs text-gray-400 border-t border-gray-100">
+              <p>Copyright © 2025 BW Akses+</p>
+              <div className="flex gap-2 opacity-70">
+                <Link
+                  target="_blank"
+                  to="https://play.google.com/store/apps/details?id=id.co.bankwonosobo.bwaccess&hl=id"
+                >
+                  <img src={AndroidStore} className="h-6" />
+                </Link>
+                <Link target="_blank" to="https://www.apple.com/id/app-store/">
+                  <img src={AppleStore} className="h-6" />
+                </Link>
+              </div>
+            </footer>
           </div>
-        </footer>
-      </SidebarInset>
-    </SidebarProvider>
-  );
-}
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex items-center gap-3 px-3 py-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
-                    <Building className="h-4 w-4" />
-                  </div>
-                  <div className="flex flex-col leading-tight">
-                    <span className="text-sm font-semibold text-gray-900">
-                      Makaryoo
-                    </span>
-                    <span className="text-xs text-gray-400">Enterprise</span>
-                  </div>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-      </SidebarContent>
-    </Sidebar>
-  );
-}
-
-import { ChevronRight, type LucideIcon } from "lucide-react";
-
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
-import { useEffectOnce, useLocalStorage } from "react-use";
-
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
-  const { pathname } = useLocation();
-
-  const isActive = (url: string) =>
-    pathname === url || pathname.startsWith(url + "/");
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
-      <SidebarMenu>
-        {items.map((item) => {
-          const hasActiveChild = item.items?.some((sub) => isActive(sub.url));
-
-          return (
-            <Collapsible
-              key={item.title}
-              asChild
-              defaultOpen={hasActiveChild}
-              className="group/collapsible"
-            >
-              {item.items ? (
-                <SidebarMenuItem>
-                  <CollapsibleTrigger
-                    className={`py-2.5 ${
-                      hasActiveChild
-                        ? "bg-sidebar-accent text-primary font-medium"
-                        : ""
-                    }`}
-                    asChild
-                  >
-                    <SidebarMenuButton
-                      className={clsx(
-                        "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition",
-                        "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
-                        isActive(item.url) &&
-                          "bg-gray-100 text-gray-900 font-medium",
-                      )}
-                      tooltip={item.title}
-                    >
-                      {item.icon && (
-                        <item.icon className="h-4 w-4 text-gray-400" />
-                      )}
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton
-                            className={clsx(
-                              "pl-9 py-1.5 text-sm text-gray-500",
-                              "hover:text-gray-900",
-                              isActive(subItem.url) &&
-                                "text-gray-900 font-medium",
-                            )}
-                            asChild
-                          >
-                            <Link className="text-sm" to={subItem.url}>
-                              <span>{subItem.title}</span>
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              ) : (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className={clsx(
-                      "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition",
-                      "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
-                      isActive(item.url) &&
-                        "bg-gray-100 text-gray-900 font-medium",
-                    )}
-                    tooltip={item.title}
-                  >
-                    <Link to={item.url}>
-                      {item.icon && (
-                        <item.icon className="h-4 w-4 text-gray-400" />
-                      )}
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-            </Collapsible>
-          );
-        })}
-      </SidebarMenu>
-    </SidebarGroup>
-  );
-}
-
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { userCurrent } from "@/lib/api/user.api";
-import clsx from "clsx";
-import { ModeToggle } from "../mode-toggle";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Toaster } from "../ui/sonner";
-
-export function SiteHeader() {
-  const user: { name: string; email: string; avatar: string } = {
-    name: "Ahmad",
-    email: "rifai@gmail.com",
-    avatar: "aa",
-  };
-  return (
-    <header className="flex h-16 items-center border-b border-gray-100 bg-white px-6">
-      <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6 ">
-        <SidebarTrigger className="-ml-1" />
-        <Separator
-          orientation="vertical"
-          className="mx-2 data-[orientation=vertical]:h-4"
-        />
-        <h1 className="text-sm font-medium text-gray-700">Documents</h1>
-        <div className="ml-auto flex items-center gap-2 ">
-          <ModeToggle />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center rounded-full hover:bg-gray-100 p-1 transition">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatar} />
-                  <AvatarFallback>AR</AvatarFallback>
-                </Avatar>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-              // side={isMobile ? "bottom" : "right"}
-              align="end"
-              sideOffset={4}
-            >
-              <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
-                  </div>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Sparkles />
-                  Upgrade to Pro
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <BadgeCheck />
-                  Account
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CreditCard />
-                  Billing
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell />
-                  Notifications
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <Link to="/logout">
-                <DropdownMenuItem>
-                  <LogOut />
-                  Log out
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        </main>
       </div>
-    </header>
+    </div>
   );
 }

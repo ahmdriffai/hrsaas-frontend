@@ -1,3 +1,4 @@
+import Loader from "@/components/fragment/loader/loader";
 import Title from "@/components/layout/Title";
 import EmployeeList from "@/feature/employee/EmployeeList";
 import EmployeeSearch from "@/feature/employee/EmployeeSearch";
@@ -6,13 +7,9 @@ import { useDocumentTitle } from "@/hooks/user-titledoc";
 import type { SearchEmployeeRequest } from "@/lib/model/employee.model";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+
 import { useLocalStorage } from "react-use";
 import { toast } from "sonner";
-
-const breadcrumbs = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Karyawan", href: "/employees" },
-];
 
 export default function EmployeePage(): React.ReactNode {
   useDocumentTitle("Daftar Employee");
@@ -29,7 +26,10 @@ export default function EmployeePage(): React.ReactNode {
   };
 
   // Fetch employee data using the custom hook
-  const { data, isError, error } = useGetEmployee(token ?? "", search);
+  const { data, isError, error, isLoading } = useGetEmployee(
+    token ?? "",
+    search,
+  );
   if (isError) {
     toast.error(error?.message || "Failed to fetch employee data");
   }
@@ -44,19 +44,26 @@ export default function EmployeePage(): React.ReactNode {
 
   return (
     <div>
-      <Title title="Data Karyawan" breadcrumbs={breadcrumbs} />
-      <EmployeeSearch
-        handleSearch={handleSearch}
-        searchKey={key}
-        setKey={setKey}
-      />
-      <EmployeeList
-        data={data}
-        page={page}
-        size={size}
-        setPage={setPage}
-        setSize={setSize}
-      />
+      <Title title="Data karyawan" />
+
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <EmployeeSearch
+            handleSearch={handleSearch}
+            searchKey={key}
+            setKey={setKey}
+          />
+          <EmployeeList
+            data={data}
+            page={page}
+            size={size}
+            setPage={setPage}
+            setSize={setSize}
+          />
+        </>
+      )}
     </div>
   );
 }

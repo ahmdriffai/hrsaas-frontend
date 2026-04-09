@@ -20,7 +20,7 @@ export default function Table<T>({
   emptyMessage = "No data available",
 }: TableProps<T>) {
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white">
+    <div className="w-full overflow-scroll rounded-2xl border border-gray-200 bg-white">
       <table className="w-full border-collapse text-sm">
         {/* HEADER */}
         <thead className="bg-gray-50">

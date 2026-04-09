@@ -1,6 +1,7 @@
 import Button from "@/components/fragment/button/button";
 import Input from "@/components/fragment/input/input";
 import InputDate from "@/components/fragment/input/input-date";
+import ProgressBar from "@/components/fragment/progress-bar/progres-bar";
 import Select from "@/components/fragment/select/select";
 import {
   Form,
@@ -79,9 +80,13 @@ export default function EmployeeCreate(): React.ReactNode {
 
   return (
     <Form {...form}>
+      <div className="flex h-1 w-full justify-between items-center gap-x-4 my-10">
+        <h3>Form informasi karyawan</h3>
+        <ProgressBar currentStep={1} totalSteps={3} />
+      </div>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="mt-3 space-y-6"
+        className="mt-3 space-y-8"
       >
         <FormField
           control={form.control}
@@ -89,10 +94,10 @@ export default function EmployeeCreate(): React.ReactNode {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Nama Lengkap <span className="text-red-900">*</span>
+                Nama lengkap <span className="text-red-900">*</span>
               </FormLabel>
               <FormControl>
-                <Input label="Nama Lengkap" type="text" {...field} />
+                <Input label="Nama lengkap karyawan" type="text" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,9 +109,9 @@ export default function EmployeeCreate(): React.ReactNode {
           name="employee_number"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nomer Induk Karyawan</FormLabel>
+              <FormLabel>Nomer induk karyawan</FormLabel>
               <FormControl>
-                <Input label="Nomer Induk Karyawan" type="text" {...field} />
+                <Input label="Nomer induk karyawan" type="text" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -247,14 +252,15 @@ export default function EmployeeCreate(): React.ReactNode {
             )}
           />
         </div>
-        <div className="flex justify-end w-full">
+
+        <div className="flex justify-end px-6 py-5">
           {mutation.isPending ? (
             <Button disabled size="sm">
               <Spinner />
               Loading...
             </Button>
           ) : (
-            <Button type="submit">Simpan</Button>
+            <Button type="submit">Berikutnya</Button>
           )}
         </div>
       </form>

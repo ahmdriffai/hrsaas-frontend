@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import Button from "@/components/fragment/button/button";
 import LocationPicker from "@/components/fragment/location-picker";
 import MapView from "@/components/fragment/map-viewer";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -29,10 +29,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCreateOfficeLocation } from "@/hooks/feature/use-office-location";
 import { CreateOfficeLocationSchema } from "@/lib/model/office-location.model";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2Icon, PlusSquare } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
 import { useLocalStorage } from "react-use";
 import type z from "zod";
 
@@ -74,10 +73,7 @@ export default function LocationCreate() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <PlusSquare />
-          Tambah Lokasi Kantor
-        </Button>
+        <Button variant="secondary">Tambah Lokasi Kantor</Button>
       </DialogTrigger>
       <DialogContent
         className={`${form.watch("lat") && form.watch("lng") ? "sm:max-w-210" : ""} `}
@@ -87,7 +83,7 @@ export default function LocationCreate() {
 
           <>
             <div
-              className={`grid  ${form.watch("lat") && form.watch("lng") ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-6`}
+              className={`grid ${form.watch("lat") && form.watch("lng") ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-6`}
             >
               {/* Form Section */}
               <Form {...form}>
@@ -199,10 +195,7 @@ export default function LocationCreate() {
                     )}
                   />
 
-                  <div className="flex justify-start gap-2">
-                    <Button type="button" variant="destructive" asChild>
-                      <Link to="/attendancespots">Batal</Link>
-                    </Button>
+                  <div className="flex justify-end gap-2">
                     {mutation.isPending ? (
                       <Button type="button" disabled>
                         <Loader2Icon className="animate-spin" />

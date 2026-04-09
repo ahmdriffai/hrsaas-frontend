@@ -1,7 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import SearchForm from "@/components/fragment/search-form/search-form";
 import type { FormEventHandler } from "react";
 import SanctionTypeCreate from "./SanctionTypeCreate";
 
@@ -17,31 +14,15 @@ export default function SanctionTypeSearch({
   setKey,
 }: Props) {
   return (
-    <Card className="mb-5">
-      <CardContent className="flex items-center gap-x-6">
+    <div className="mb-4">
+      <div className="mb-4 flex gap-4 flex-wrap">
         <SanctionTypeCreate />
-
-        <form
-          onSubmit={handleSearch}
-          className="grid grid-cols-1 gap-4 items-center md:grid-cols-4"
-        >
-          <div className="space-y-1">
-            <Input
-              id="name"
-              placeholder="Cari ..."
-              value={searchKey}
-              onChange={(e) => setKey(e.target.value)}
-            />
-          </div>
-
-          <div className="flex items-end gap-2">
-            <Button type="submit" className="gap-2">
-              <Search className="h-4 w-4" />
-              Search
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      </div>
+      <SearchForm
+        onSearch={handleSearch}
+        searchKey={searchKey}
+        setKey={setKey}
+      />
+    </div>
   );
 }

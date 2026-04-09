@@ -1,6 +1,6 @@
 import Button from "@/components/fragment/button/button";
 import SearchForm from "@/components/fragment/search-form/search-form";
-import { Card, CardContent } from "@/components/ui/card";
+import { ArrowDownToLine, ArrowUpToLine } from "lucide-react";
 import type { FormEventHandler } from "react";
 import { Link } from "react-router";
 
@@ -16,20 +16,29 @@ export default function EmployeeSearch({
   setKey,
 }: Props): React.ReactNode {
   return (
-    <Card className="mb-5">
-      <CardContent>
-        <div className="mb-4">
-          <Button asChild variant="secondary" size="sm">
-            <Link to="/employees/create">Create Employee</Link>
-          </Button>
-        </div>
-
-        <SearchForm
-          onSearch={handleSearch}
-          searchKey={searchKey}
-          setKey={setKey}
-        />
-      </CardContent>
-    </Card>
+    <div className="mb-4">
+      <div className="mb-3 flex gap-3 flex-wrap">
+        <Button asChild variant="secondary" size="md">
+          <Link to="/employees/create">Tambah karyawan</Link>
+        </Button>
+        <Button asChild variant="outline" size="md">
+          <Link to="/employees/create">
+            <ArrowUpToLine size={20} />
+            Import data
+          </Link>
+        </Button>
+        <Button asChild variant="outline" size="md">
+          <Link to="/employees/create">
+            <ArrowDownToLine size={20} />
+            Download
+          </Link>
+        </Button>
+      </div>
+      <SearchForm
+        onSearch={handleSearch}
+        searchKey={searchKey}
+        setKey={setKey}
+      />
+    </div>
   );
 }
