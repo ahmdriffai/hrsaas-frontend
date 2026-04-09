@@ -1,10 +1,14 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM oven/bun:latest AS builder
 
 WORKDIR /app
 COPY . .
-RUN npm install
-RUN npm run build
+
+# Install dependencies pakai bun
+RUN bun install
+
+# Build project
+RUN bun run build
 
 # Production stage
 FROM nginx:alpine
